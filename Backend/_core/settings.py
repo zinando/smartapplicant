@@ -60,6 +60,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# _core/settings.py
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5MB limit
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5MB limit
+
 ROOT_URLCONF = '_core.urls'
 
 TEMPLATES = [
@@ -131,3 +135,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Replace with Render/Redis Cloud URL
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Replace with Render/Redis Cloud URL
+CELERY_TIMEZONE = 'UTC'
