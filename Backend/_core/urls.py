@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import ResumeParseView
+from api.views import ResumeParseView, TaskStatusView
 from django.urls import include
 
 
@@ -24,4 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/parse/', ResumeParseView.as_view(), name='parse-resume'),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/task-status/<str:task_id>/', TaskStatusView.as_view()),
 ]

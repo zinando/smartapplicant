@@ -3,9 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 #from rest_framework.exceptions import ValidationError
-import PyPDF2
-import docx2txt
-import io
+#import PyPDF2
+#import docx2txt
+#import io
 from celery.result import AsyncResult
 from .utils import extract_text, calculate_ats_score
 from .tasks import async_extract_and_score
@@ -26,7 +26,7 @@ class ResumeParseView(APIView):
 
             if file.size > 2 * 1024 * 1024:  # Example: 2MB+ → async
                 task = async_extract_and_score.delay(file_bytes, file.name)
-                status = 2
+                res_status = 2
                 data = {
                     'task_id': task.id,
                     'status': 'Processing',
@@ -39,7 +39,7 @@ class ResumeParseView(APIView):
                 
                 text = result['text']
                 ats_score = calculate_ats_score(text)
-                status = 1
+                res_status = 1
                 data = {
                         'text': text,
                         'ats_score': ats_score,
@@ -49,7 +49,7 @@ class ResumeParseView(APIView):
                             'type': file.content_type
                         }
                 }
-            return Response({'status': status, 'data': data, 'message':'success'}, status=status.HTTP_200_OK)
+            return Response({'status': res_status, 'data': data, 'message':'success'}, status=status.HTTP_200_OK)
             
         except Exception as e:
             error = str(e)

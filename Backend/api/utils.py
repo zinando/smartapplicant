@@ -1,7 +1,6 @@
 import docx2txt
 import PyPDF2
 import io
-from .tasks import mock_heavy_parsing
 
 def extract_text(file_bytes, filename):
     """Extract text from PDF/DOCX in memory"""
