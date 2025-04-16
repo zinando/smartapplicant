@@ -7,7 +7,7 @@ from rest_framework import status
 #import docx2txt
 #import io
 from celery.result import AsyncResult
-from .utils import extract_text, calculate_ats_score
+from .utils import extract_text, calculate_ats_score, parse_resume
 from .tasks import async_extract_and_score
 
 class ResumeParseView(APIView):
@@ -30,29 +30,33 @@ class ResumeParseView(APIView):
                 data = {
                     'task_id': task.id,
                     'status': 'Processing',
+                    'ats_score': None,
+                    'required_sections': None
                 }
-                #return Response({'task_id': task.
             else:
                 result = extract_text(file_bytes, file.name)
                 if result['status'] == 0:
                     raise Exception(result['message'])
                 
                 text = result['text']
-                ats_score = calculate_ats_score(text)
+
+                # parse resume text to get data
+                parsed_data = parse_resume(text)
+
+                # Calculate ATS optimization score with the parsed data
+                ats_score = calculate_ats_score(parsed_data)
                 res_status = 1
                 data = {
-                        'text': text,
+                        'task_id': None,
+                        'status': 'Completed',
                         'ats_score': ats_score,
-                        'file_metadata': {
-                            'name': file.name,
-                            'size': file.size,
-                            'type': file.content_type
-                        }
+                        'required_sections': parsed_data
                 }
             return Response({'status': res_status, 'data': data, 'message':'success'}, status=status.HTTP_200_OK)
             
         except Exception as e:
             error = str(e)
+            print(f"Error: {error}")
             return Response({'status': 0, 'message': error}, status=status.HTTP_400_BAD_REQUEST)
         
 class TaskStatusView(APIView):
