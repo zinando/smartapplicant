@@ -1,115 +1,86 @@
 # Smart Applicant 🔍✨
 
-**Optimize Your Resume for ATS & Recruiters**  
-*Get instant feedback on your resume's ATS compatibility, relevance to job descriptions, and AI-powered enhancement tips.*
+**ATS-Optimized Resume Analysis Platform**  
+*Get instant feedback on your resume's compatibility with applicant tracking systems and AI-powered improvement suggestions.*
 
-[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Django REST](https://img.shields.io/badge/Django_REST-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.django-rest-framework.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-13-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Eleventy](https://img.shields.io/badge/Eleventy-1.0.0-4A2B8C?style=for-the-badge)](https://www.11ty.dev/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-![Smart Applicant Demo](demo.gif) <!-- Replace with actual demo gif -->
+## 🏗️ System Architecture
+┌───────────────────────────────────────────────────────────────┐
+│ Smart Applicant │
+│ │
+│ ┌─────────────┐ ┌─────────────┐ ┌──────────────────┐ │
+│ │ │ │ │ │ │ │
+│ │ Next.js │ │ Eleventy │ │ Django REST │ │
+│ │ (App) ◄───► (Marketing) │ │ (API) │ │
+│ │ │ │ │ │ │ │
+│ └──────┬──────┘ └─────────────┘ └───────┬──────────┘ │
+│ │ │ │
+│ ▼ ▼ │
+│ ┌─────────────┐ ┌──────────────────┐ │
+│ │ │ │ │ │
+│ │ Tailwind │ │ PostgreSQL │ │
+│ │ (UI) │ │ (Database) │ │
+│ │ │ │ │ │
+│ └─────────────┘ └─────────┬────────┘ │
+│ │ │
+│ ┌────────────────────────────────────────────────┘ │
+│ │ │
+│ ▼ │
+│ ┌──────────────────┐ ┌──────────────────┐ │
+│ │ │ │ │ │
+│ │ spaCy NLP │ │ OpenAI API │ │
+│ │ (Parsing) │ │ (Enhancements) │ │
+│ │ │ │ │ │
+│ └──────────────────┘ └──────────────────┘ │
+│ │
+└───────────────────────────────────────────────────────────────┘
 
-## 🚀 Features
 
-### **Free Tier**
+## 🌟 Key Features
+
+### Core Analysis Engine
 - **ATS Readability Scan**  
-  - Detects hidden text, unsupported formats, and section visibility.
-- **Content Gap Analysis**  
-  - Highlights missing keywords from job descriptions (e.g., skills, education).
-- **Relevance Score**  
-  - Rates resume-JD match (0-100%) with breakdowns.
-- **Enhancement Tips**  
-  - AI-generated suggestions to improve your resume.
+  - Parsing accuracy scoring (PDF/DOCX)
+  - Section visibility detection
+  - Format compatibility checks
 
-### **Pro Tier (Coming Soon)**
-- **AI-Powered Tailored Resumes**  
-  - Generate job-specific resumes in seconds.
-- **Multi-Resume Management**  
-  - Track versions for different job applications.
+### AI Enhancements
+- **Smart Keyword Extraction**  
+  ```python
+  def extract_keywords(text):
+      nlp = spacy.load("en_core_web_lg")
+      doc = nlp(text)
+      return [chunk.text for chunk in doc.noun_chunks]
 
-## 🛠️ Tech Stack
+🛠️ Tech Stack
+__________________________________________________________
+Layer	     |             Components
+__________________________________________________________
+Frontend   |            HTML5, CSS3, Eleventy, Tailwind
+----------------------------------------------------------
+Backend    |	          Django 4.2, DRF, Celery, Redis
+----------------------------------------------------------
+Storage    |          	PostgreSQL
+----------------------------------------------------------
+AI         |          	spaCy, Gemini
+----------------------------------------------------------
 
-| Component       | Technology                          |
-|-----------------|-------------------------------------|
-| **Backend**     | Django 4.2 + Django REST Framework  |
-| **Frontend**    | Next.js 13 (App Router) + Tailwind  |
-| **Database**    | PostgreSQL                          |
-| **AI/NLP**      | spaCy, OpenAI API                   |
-| **Deployment**  | Vercel (Frontend) + Render (Django) |
-| **Auth**        | JWT (SimpleJWT)                     |
-
-## 📦 Installation
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- PostgreSQL
-
-### Steps
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/yourusername/smart-applicant.git
-   cd smart-applicant
-   ```
-
-2. **Set up backend**
-    ```bash
-    cd backend
-    python -m venv venv
-    venv\Scripts\activate on # Windows | source venv/bin/activate  for Linux/Mac
-    pip install -r requirements.txt
-    python manage.py migrate
-    ```
-3. **Set up frontend**
-    ```bash
-    cd ../frontend
-    npm install
-    ```
-4. **Run locally**
-    ```bash
-    # Backend (Django)
-    python manage.py runserver
-
-    # Frontend (Next.js)
-    npm run dev
-    ```
-Access at http://localhost:3000
-
-🌟 Why Smart Applicant?
-Privacy-First: No resume data stored without permission.
-
-Open Core: Free tier fully open-source; Pro tier funds development.
-
-ATS Science: Based on real recruiter workflows (not guesswork).
-
-🤝 Contributing
-We welcome PRs! See our Contribution Guide for:
-
-Feature requests
-
-Bug reports
-
-Code style conventions
-
-📄 License
-MIT © 2023 [Your Name]
-Empowering job seekers worldwide.
-
-
----
-
-### Key Additions for Production:
-1. **Demo Assets**: Replace `demo.gif` with a Loom/screen recording.
-2. **Badges**: Add CI/CD (e.g., GitHub Actions), test coverage, and dependency status.
-3. **Roadmap**: Add a `ROADMAP.md` linking to future features.
-4. **Environment Setup**: Include `.env` template (`.env.example`).
-
----
-
-Want me to:
-1. Draft the `CONTRIBUTING.md`?
-2. Add detailed API docs (e.g., Swagger setup)?
-3. Create an issue template for bug reports?  
-
-Let’s refine this together!
+🚀 Quick Start
+```bash
+  # Backend
+  cd backend && python -m venv venv
+  source venv/bin/activate  # macOS/Linux
+  venv\Scripts\activate     # Windows
+  pip install -r requirements.txt
+  python manage.py runserver
+```
+```bash
+  # Frontend
+  cd ../ui
+  npm install
+  npx eleventy --serve
+```
