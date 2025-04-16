@@ -14,15 +14,18 @@
 │ │
 │ ┌─────────────┐ ┌─────────────┐ ┌──────────────────┐ │
 │ │ │ │ │ │ │ │
-│ │ Next.js │ │ Eleventy │ │ Django REST │ │
+│ │ HTML │ │ Eleventy │ │ Django REST │ │
+
 │ │ (App) ◄───► (Marketing) │ │ (API) │ │
 │ │ │ │ │ │ │ │
 │ └──────┬──────┘ └─────────────┘ └───────┬──────────┘ │
 │ │ │ │
 │ ▼ ▼ │
+|
 │ ┌─────────────┐ ┌──────────────────┐ │
 │ │ │ │ │ │
 │ │ Tailwind │ │ PostgreSQL │ │
+| |
 │ │ (UI) │ │ (Database) │ │
 │ │ │ │ │ │
 │ └─────────────┘ └─────────┬────────┘ │
@@ -33,6 +36,7 @@
 │ ┌──────────────────┐ ┌──────────────────┐ │
 │ │ │ │ │ │
 │ │ spaCy NLP │ │ OpenAI API │ │
+| |
 │ │ (Parsing) │ │ (Enhancements) │ │
 │ │ │ │ │ │
 │ └──────────────────┘ └──────────────────┘ │
@@ -48,7 +52,6 @@
   - Section visibility detection
   - Format compatibility checks
 
-### AI Enhancements
 - **Smart Keyword Extraction**  
   ```python
   def extract_keywords(text):
