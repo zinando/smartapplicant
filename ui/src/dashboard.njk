@@ -5,10 +5,10 @@ title: Dashboard
 
 <div class="flex h-full">
     <!-- Sidebar -->
-    {% include "sidebar.njk" %}
+    {% include "sidebar.njk" %} 
 
     <!-- Mobile sidebar toggle -->
-    <button class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
+    <button id="sidebar-toggle" class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -185,14 +185,6 @@ title: Dashboard
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile sidebar toggle
-    const mobileToggle = document.querySelector('button.md\\:hidden');
-    const sidebar = document.querySelector('aside');
-    
-    mobileToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('hidden');
-    });
-
     // Resume selection
     const resumeCards = document.querySelectorAll('.resume-card');
     resumeCards.forEach(card => {

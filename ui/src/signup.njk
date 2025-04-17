@@ -176,6 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(response.statusText);
             const data = await response.json();
             if (data.status !== 1) throw new Error(data.message);
+
+            // Store user data
+            API.login(data);
             
             // Redirect to dashboard
             window.location.href = '/dashboard';

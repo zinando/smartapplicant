@@ -1,11 +1,14 @@
 // Uses the API singleton
 const AuthService = {
+
     login: function(data) {
-      return API.request('/api/auth/login/', 'POST', data);
+      const response = API.request('/api/auth/login/', 'POST', data);
+      return response;
     },
     
     signup: function(data) {
-      return API.request('/api/auth/signup/', 'POST', data);
+      const response = API.request('/api/auth/signup/', 'POST', data);
+      return response;
     },
     
     logout: function() {

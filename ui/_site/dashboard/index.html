@@ -65,12 +65,12 @@
                 <nav class="hidden md:flex space-x-8">
                     <a href="/features" class="text-gray-500 hover:text-blue-600 transition">Features</a>
                     <a href="/how_it_works" class="text-gray-500 hover:text-blue-600 transition">How It Works</a>
-                    <!-- <a href="#pricing" class="text-gray-500 hover:text-blue-600 transition">Pricing</a> -->
-                    <a href="/login" class="text-blue-600 hover:text-blue-800 font-medium">Login</a>
+                    <a href="/dashboard" class="dashboardBtn text-gray-500 hover:text-blue-600 transition hidden">Dashboard</a>
+                    <a href="/login" class="loginBtn text-blue-600 hover:text-blue-800 font-medium">Login</a>
                 </nav>
                 
                 <!-- Mobile Menu Button -->
-                <button class="md:hidden text-gray-500 hover:text-gray-600">
+                <button id="main-mobile-menu-toggle" class="md:hidden text-gray-500 hover:text-gray-600">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -79,12 +79,12 @@
         </div>
         
         <!-- Mobile Menu (Hidden by default) -->
-        <div class="md:hidden hidden" id="mobile-menu">
+        <div class="md:hidden hidden" id="main-mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="/features" class="block px-3 py-2 text-gray-700 hover:bg-gray-100">Features</a>
                 <a href="/how_it_works" class="block px-3 py-2 text-gray-700 hover:bg-gray-100">How It Works</a>
-                <!-- <a href="#pricing" class="block px-3 py-2 text-gray-700 hover:bg-gray-100">Pricing</a> -->
-                <a href="/login" class="block px-3 py-2 text-blue-600 font-medium">Login</a>
+                <a href="/dashboard" class="dashboardBtn block px-3 py-2 text-gray-700 hover:bg-gray-100 hidden">Dashboard</a>
+                <a href="/login" class="loginBtn block px-3 py-2 text-blue-600 font-medium">Login</a>
             </div>
         </div>
     </header>
@@ -123,7 +123,7 @@
                 </svg>
                 Profile
             </a>
-            <a href="/logout" class="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md group">
+            <a href="#" onclick="logoutUser()" class="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md group">
                 <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
@@ -133,9 +133,11 @@
     </div>
 </aside>
 
+<script src="/js/sidebar.js"></script>
+ 
 
     <!-- Mobile sidebar toggle -->
-    <button class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
+    <button id="sidebar-toggle" class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -312,14 +314,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile sidebar toggle
-    const mobileToggle = document.querySelector('button.md\\:hidden');
-    const sidebar = document.querySelector('aside');
-    
-    mobileToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('hidden');
-    });
-
     // Resume selection
     const resumeCards = document.querySelectorAll('.resume-card');
     resumeCards.forEach(card => {
@@ -444,8 +438,24 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- display mobile menu on click -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.querySelector('header button.md\\:hidden');
-            const mobileMenu = document.getElementById('mobile-menu');
+            // Listen for storage changes from other tabs
+            window.addEventListener('storage', (event) => {
+                if (['access_token', 'refresh_token', 'user'].includes(event.key)) {
+                    API.initialize();
+                }
+            });
+                
+            if (API.isAuthenticated()) {
+                document.querySelectorAll('.dashboardBtn').forEach(el => el.classList.remove('hidden'));
+                document.querySelectorAll('.loginBtn').forEach(el => el.classList.add('hidden'));
+            } else {
+                document.querySelectorAll('.dashboardBtn').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.loginBtn').forEach(el => el.classList.remove('hidden'));
+            }
+
+
+            const mobileMenuButton = document.getElementById('main-mobile-menu-toggle');
+            const mobileMenu = document.getElementById('main-mobile-menu');
             
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
