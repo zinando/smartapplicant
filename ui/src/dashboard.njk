@@ -1,0 +1,263 @@
+---
+layout: base.njk
+title: Dashboard
+---
+
+<div class="flex h-full">
+    <!-- Sidebar -->
+    {% include "sidebar.njk" %}
+
+    <!-- Mobile sidebar toggle -->
+    <button class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- Main content -->
+    <main class="flex-1 overflow-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Resume Selector -->
+            <div class="mb-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900">Your Resumes</h3>
+                    <button id="upload-new-btn" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Upload New
+                    </button>
+                </div>
+                
+                <div class="mt-4 flex flex-wrap gap-3" id="resume-list">
+                    <!-- Resume cards will be inserted here by JavaScript -->
+                    <div class="resume-card relative border rounded-md p-3 w-full sm:w-48 cursor-pointer hover:border-blue-500 border-blue-300 bg-blue-50">
+                        <h4 class="font-medium text-gray-900 truncate">Software Engineer Resume</h4>
+                        <p class="text-xs text-gray-500 mt-1">Last updated: 2 days ago</p>
+                        <span class="absolute top-2 right-2 text-xs px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800">Active</span>
+                    </div>
+                    
+                    <div class="resume-card relative border rounded-md p-3 w-full sm:w-48 cursor-pointer hover:border-gray-300 border-gray-200">
+                        <h4 class="font-medium text-gray-900 truncate">Product Manager Resume</h4>
+                        <p class="text-xs text-gray-500 mt-1">Last updated: 1 week ago</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Analytics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- ATS Score Card -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-900">ATS Score</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Good
+                        </span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-center">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#E5E7EB"
+                                    stroke-width="3"
+                                />
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#2563EB"
+                                    stroke-width="3"
+                                    stroke-dasharray="78, 100"
+                                    stroke-linecap="round"
+                                />
+                            </svg>
+                            <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                                <span class="text-2xl font-bold text-gray-900">78%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-600">Your current resume scores better than 65% of resumes we analyze.</p>
+                </div>
+
+                <!-- Keyword Coverage -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-medium text-gray-900">Keyword Coverage</h3>
+                    <div class="mt-4 space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Technical Skills</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Soft Skills</span>
+                                <span>62%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 62%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>Industry Terms</span>
+                                <span>73%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 73%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Improvement Suggestions -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Improvement Suggestions</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <p class="ml-2 text-sm text-gray-700">Add 3-5 more technical skills from the job description</p>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <p class="ml-2 text-sm text-gray-700">Quantify achievements in your experience section (e.g., "Increased performance by 30%")</p>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <p class="ml-2 text-sm text-gray-700">Include more action verbs like "developed", "led", "optimized"</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Upload Resume Modal (Hidden by default) -->
+<div id="upload-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Upload New Resume</h3>
+            <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            <div class="mt-4 flex text-sm text-gray-600">
+                <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                    <span>Upload a file</span>
+                    <input id="resume-upload" type="file" class="sr-only" accept=".pdf,.docx">
+                </label>
+                <p class="pl-1">or drag and drop</p>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">PDF or DOCX up to 5MB</p>
+        </div>
+        <div class="mt-4 flex justify-end space-x-3">
+            <button id="cancel-upload" type="button" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Cancel
+            </button>
+            <button id="confirm-upload" type="button" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50" disabled>
+                Upload
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Mobile sidebar toggle
+    const mobileToggle = document.querySelector('button.md\\:hidden');
+    const sidebar = document.querySelector('aside');
+    
+    mobileToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('hidden');
+    });
+
+    // Resume selection
+    const resumeCards = document.querySelectorAll('.resume-card');
+    resumeCards.forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelector('.resume-card.border-blue-300')?.classList.remove('border-blue-300', 'bg-blue-50', 'hover:border-blue-500');
+            document.querySelector('.resume-card span.bg-blue-100')?.remove();
+            
+            card.classList.add('border-blue-300', 'bg-blue-50', 'hover:border-blue-500');
+            
+            const activeBadge = document.createElement('span');
+            activeBadge.className = 'absolute top-2 right-2 text-xs px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800';
+            activeBadge.textContent = 'Active';
+            card.appendChild(activeBadge);
+            
+            // Here you would load the selected resume data via API
+            console.log('Selected resume:', card.querySelector('h4').textContent);
+        });
+    });
+
+    // Upload modal
+    const uploadBtn = document.getElementById('upload-new-btn');
+    const uploadModal = document.getElementById('upload-modal');
+    const closeModal = document.getElementById('close-modal');
+    const cancelUpload = document.getElementById('cancel-upload');
+    const confirmUpload = document.getElementById('confirm-upload');
+    const fileInput = document.getElementById('resume-upload');
+    
+    [uploadBtn, closeModal, cancelUpload].forEach(el => {
+        el.addEventListener('click', () => {
+            uploadModal.classList.toggle('hidden');
+        });
+    });
+    
+    fileInput.addEventListener('change', () => {
+        confirmUpload.disabled = !fileInput.files.length;
+    });
+    
+    confirmUpload.addEventListener('click', async () => {
+        if (fileInput.files.length) {
+            // Here you would implement the actual upload logic
+            const formData = new FormData();
+            formData.append('resume', fileInput.files[0]);
+            
+            try {
+                // Example upload API call
+                const response = await fetch('/api/resumes/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    uploadModal.classList.add('hidden');
+                    // Refresh resume list
+                    console.log('Upload successful');
+                } else {
+                    alert('Upload failed');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload error');
+            }
+        }
+    });
+});
+</script>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Applicant | ATS-Optimized Resume Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/logo/logo-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/fonts/inter.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #f9fafb, #e5e7eb);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        }
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #ffffff;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        #file-display {
+            transition: all 0.3s ease;
+        }
+        #file-name {
+            font-weight: 500;
+            color: #2563eb;
+        }
+        .relative-parent {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header/Nav -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo + App Name -->
+                <a href="/">
+                    <div class="flex items-center">
+                        <img src="/logo/logo.svg" alt="Logo Preview" style="border: 1px dashed #ccc">
+                        <!-- <span class="ml-2 text-xl font-bold text-gray-900">Smart Applicant</span> -->
+                    </div>
+                </a>
+                
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="/features" class="text-gray-500 hover:text-blue-600 transition">Features</a>
+                    <a href="/how_it_works" class="text-gray-500 hover:text-blue-600 transition">How It Works</a>
+                    <!-- <a href="#pricing" class="text-gray-500 hover:text-blue-600 transition">Pricing</a> -->
+                    <a href="/login" class="text-blue-600 hover:text-blue-800 font-medium">Login</a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-gray-500 hover:text-gray-600">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="/features" class="block px-3 py-2 text-gray-700 hover:bg-gray-100">Features</a>
+                <a href="/how_it_works" class="block px-3 py-2 text-gray-700 hover:bg-gray-100">How It Works</a>
+                <!-- <a href="#pricing" class="block px-3 py-2 text-gray-700 hover:bg-gray-100">Pricing</a> -->
+                <a href="/login" class="block px-3 py-2 text-blue-600 font-medium">Login</a>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        
+<section class="hero-gradient text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold mb-4">Create Your Account</h1>
+        <p class="text-lg opacity-90">Start optimizing your resume for ATS today</p>
+    </div>
+</section>
+
+<section class="py-16 px-4">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8">
+        <form id="signup-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="first-name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <input type="text" id="first-name" name="first_name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="last-name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <input type="text" id="last-name" name="last_name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <p id="email-error" class="mt-1 text-sm text-red-600 hidden">Please enter a valid email address</p>
+            </div>
+
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input type="tel" id="phone" name="phone"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" id="password" name="password" required minlength="8"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <ul id="password-rules" class="mt-2 text-xs text-gray-500">
+                    <li class="password-rule" data-rule="length">• At least 8 characters</li>
+                    <li class="password-rule" data-rule="uppercase">• At least 1 uppercase letter</li>
+                    <li class="password-rule" data-rule="lowercase">• At least 1 lowercase letter</li>
+                    <li class="password-rule" data-rule="number">• At least 1 number</li>
+                </ul>
+            </div>
+
+            <div>
+                <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                <input type="password" id="confirm-password" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <p id="password-match-error" class="mt-1 text-sm text-red-600 hidden">Passwords do not match</p>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="terms" name="terms" required
+                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label for="terms" class="ml-2 block text-sm text-gray-700">
+                    I agree to the <a href="/tos" class="text-blue-600 hover:text-blue-800">Terms of Service</a> and <a href="/privacy" class="text-blue-600 hover:text-blue-800">Privacy Policy</a>
+                </label>
+            </div>
+
+            <div id="form-error" class="hidden py-3 px-4 bg-red-50 text-red-600 rounded-md text-sm"></div>
+
+            <button type="submit" id="submit-btn"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <span id="btn-text">Create Account</span>
+                <span id="spinner" class="spinner hidden ml-2"></span>
+            </button>
+
+            <div class="text-center text-sm text-gray-500">
+                Already have an account? <a href="/login" class="text-blue-600 hover:text-blue-800">Log in</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('signup-form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const spinner = document.getElementById('spinner');
+    const formError = document.getElementById('form-error');
+    
+    // Password validation rules
+    const passwordRules = {
+        length: value => value.length >= 8,
+        uppercase: value => /[A-Z]/.test(value),
+        number: value => /[0-9]/.test(value),
+        lowercase: value => /[a-z]/.test(value)
+    };
+
+    // Validate password in real-time
+    passwordInput.addEventListener('input', () => {
+        const value = passwordInput.value;
+        Object.keys(passwordRules).forEach(rule => {
+            const element = document.querySelector(`.password-rule[data-rule="${rule}"]`);
+            if (passwordRules[rule](value)) {
+                element.classList.add('text-green-500');
+                element.classList.remove('text-gray-500');
+            } else {
+                element.classList.remove('text-green-500');
+                element.classList.add('text-gray-500');
+            }
+        });
+    });
+
+    // Confirm password match
+    confirmPasswordInput.addEventListener('input', () => {
+        const errorElement = document.getElementById('password-match-error');
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            errorElement.classList.remove('hidden');
+            return false;
+        } else {
+            errorElement.classList.add('hidden');
+            return true;
+        }
+    });
+
+    // Email validation
+    emailInput.addEventListener('blur', () => {
+        const errorElement = document.getElementById('email-error');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+            errorElement.classList.remove('hidden');
+            return false;
+        } else {
+            errorElement.classList.add('hidden');
+            return true;
+        }
+    });
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Validate form
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            showError('Passwords do not match');
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
+            showError('Please enter a valid email address');
+            return;
+        }
+
+        // Prepare data
+        const formData = {
+            email: emailInput.value,
+            password: passwordInput.value,
+            first_name: document.getElementById('first-name').value,
+            last_name: document.getElementById('last-name').value,
+            phone: document.getElementById('phone').value
+        };
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.textContent = 'Creating Account...';
+        spinner.classList.remove('hidden');
+        formError.classList.add('hidden');
+
+        try {
+            // Use AuthService
+            const response = await AuthService.signup(formData);
+            
+            if (!response.ok) throw new Error(response.statusText);
+            const data = await response.json();
+            if (data.status !== 1) throw new Error(data.message);
+            
+            // Redirect to dashboard
+            window.location.href = '/dashboard';
+        } catch (error) {
+            showError(error.message);
+        } finally {
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.textContent = 'Create Account';
+            spinner.classList.add('hidden');
+        }
+    });
+
+    function showError(message) {
+        formError.textContent = message;
+        formError.classList.remove('hidden');
+        window.scrollTo({
+            top: formError.offsetTop - 20,
+            behavior: 'smooth'
+        });
+    }
+});
+</script>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">Smart Applicant</h3>
+                    <p class="mb-4">The most advanced ATS optimization tool for job seekers.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+                        </a>
+                        <!-- Add other social icons -->
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/features" class="hover:text-white">Features</a></li>
+                        <li><a href="/how_it_works" class="hover:text-white">How It Works</a></li>
+                        <!-- <li><a href="#" class="hover:text-white">Pricing</a></li> -->
+                        <!-- <li><a href="#" class="hover:text-white">FAQ</a></li> -->
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/about" class="hover:text-white">About</a></li>
+                        <li><a href="/blog" class="hover:text-white">Blog</a></li>
+                        <li><a href="/careers" class="hover:text-white">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/privacy" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="/tos" class="hover:text-white">Terms of Service</a></li>
+                        <li><a href="/cookie" class="hover:text-white">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-sm text-center">
+                <p>© 2025 Smart Applicant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/upload.js"></script>
+    <script src="/js/task.js"></script>
+    <script src="/js/user/queryBackend.js"></script>
+    <script src="/js/user/auth.js"></script>
+
+    <!-- display mobile menu on click -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.querySelector('header button.md\\:hidden');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

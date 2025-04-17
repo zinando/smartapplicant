@@ -1,0 +1,8 @@
+
+
+.password-rule.text-green-500::before {
+    content: '✓ ';
+}
+.password-rule.text-gray-500::before {
+    content: '• ';
+}

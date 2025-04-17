@@ -10,7 +10,7 @@ class EmailAuthBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         if '@' in username:  # Check if the input is an email
             try:
-                user = User.objects.get(email=username)
+                user = User.objects.get(email=username) 
             except User.DoesNotExist:
                 return None
         else:

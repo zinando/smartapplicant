@@ -5,10 +5,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
+from .serializers import UserSerializer
 
 User = get_user_model()
 
 class SignUpView(generics.CreateAPIView):
+    serializer_class = UserSerializer
     def create(self, request, *args, **kwargs):
         try:
             email = request.data.get('email')
@@ -29,7 +31,7 @@ class SignUpView(generics.CreateAPIView):
             user = User.objects.create(
                 email=email,
                 password=make_password(password),
-                phone=phone,
+                phone_number=phone,
                 first_name=first_name,
                 last_name=last_name
             )
@@ -48,17 +50,22 @@ class SignUpView(generics.CreateAPIView):
         except Exception as e:
             return Response(
                 {'status': 0, 'message': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_200_OK
             )
 
 class LoginView(TokenObtainPairView):
+    serializer_class = UserSerializer
+
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
-        
-        user = authenticate(request, username=username, password=password)
-        
+
         try:
+            if not username or not password:
+                raise ValueError("Username and password are required")
+            
+            user = authenticate(request, username=username, password=password)
+
             if user is None:
                 raise ValueError("Invalid username or password")
             
@@ -75,7 +82,7 @@ class LoginView(TokenObtainPairView):
         except Exception as e:
             return Response(
                 {'status': 0, 'message': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_200_OK
             )
 
 class LogoutView(generics.GenericAPIView):
