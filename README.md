@@ -67,7 +67,7 @@
 - **Smart Keyword Extraction**  
   ```python
   def extract_keywords(text):
-      nlp = spacy.load("en_core_web_lg")
+      nlp = spacy.load("en_core_web_md")
       doc = nlp(text)
       return [chunk.text for chunk in doc.noun_chunks]
 

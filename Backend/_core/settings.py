@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+from datetime import timedelta
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-631g^*#i0a++t5m#b)6@!gd1+3oeaiec+ppny4*qaqwh9%00gh'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,8 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'api',
+    'auth_user',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +88,14 @@ TEMPLATES = [
     },
 ]
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'SIGNING_KEY': os.getenv('JWT_SIGNING_KEY'),
+}
+
 WSGI_APPLICATION = '_core.wsgi.application'
 
 
@@ -89,10 +104,27 @@ WSGI_APPLICATION = '_core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'smartapplicant',
+        'USER': 'postgres',
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),  # Use environment variable for password
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+AUTH_USER_MODEL = 'auth_user.CustomUser'
+
+AUTHENTICATION_BACKENDS = [
+    'auth_hr.authentication.EmailAuthBackend',  # Custom backend
+    'django.contrib.auth.backends.ModelBackend',  # Default Django backend
+]
 
 
 # Password validation

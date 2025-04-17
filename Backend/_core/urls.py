@@ -18,6 +18,10 @@ from django.contrib import admin
 from django.urls import path
 from api.views import ResumeParseView, TaskStatusView
 from django.urls import include
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 
 urlpatterns = [
@@ -25,4 +29,7 @@ urlpatterns = [
     path('api/parse/', ResumeParseView.as_view(), name='parse-resume'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/task-status/<str:task_id>/', TaskStatusView.as_view()),
+    path('api/auth/token/', TokenObtainPairView.as_view()),
+    path('api/auth/token/refresh/', TokenRefreshView.as_view()),
+    path('api/auth/', include('auth_user.url')),
 ]
