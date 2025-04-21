@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api.views import ResumeParseView, TaskStatusView
+from auth_user.views import ResumeUploadView, ResumeAnalysisView
 from django.urls import include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -32,4 +33,6 @@ urlpatterns = [
     path('api/auth/token/', TokenObtainPairView.as_view()),
     path('api/auth/token/refresh/', TokenRefreshView.as_view()),
     path('api/auth/', include('auth_user.url')),
+    path('api/user/resume/', ResumeUploadView.as_view()),
+    path('api/user/resume/analysis/', ResumeAnalysisView.as_view()),
 ]

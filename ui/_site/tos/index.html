@@ -256,6 +256,22 @@
                 mobileMenu.classList.toggle('hidden');
             });
         });
+
+        function toggleSpinner() {
+            const spinner = document.getElementById('spinner');
+            const btnText = document.getElementById('btn-text');
+            
+            if (spinner.classList.contains('hidden')) {
+                spinner.classList.remove('hidden');
+                btnText.textContent = 'Uploading...';
+            } else {
+                spinner.classList.add('hidden');
+                btnText.textContent = 'Upload';
+            }
+        }
+        
     </script>
+     
+    
 </body>
 </html>

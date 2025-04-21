@@ -1,0 +1,480 @@
+---
+layout: base.njk
+title: Analyze Resume
+---
+
+<div class="flex h-full">
+    <!-- Sidebar -->
+    {% include "sidebar.njk" %}
+
+    <!-- Mobile sidebar toggle -->
+    <button id="sidebar-toggle" class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- Main content -->
+    <main class="flex-1 overflow-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Analysis Form -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Resume Analysis</h2>
+                
+                <form id="analysis-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Resume Selection -->
+                        <div>
+                            <label for="resume-select" class="block text-sm font-medium text-gray-700 mb-1">Select Resume</label>
+                            <select id="resume-select" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                                <option value="">-- Select a resume --</option>
+                                <!-- Will be populated by JavaScript -->
+                            </select>
+                        </div>
+
+                        <!-- Job Title -->
+                        <div>
+                            <label for="job-title" class="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                            <input type="text" id="job-title" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g. Software Engineer">
+                        </div>
+                    </div>
+
+                    <!-- Job Description -->
+                    <div>
+                        <label for="job-description" class="block text-sm font-medium text-gray-700 mb-1">Job Description</label>
+                        <textarea id="job-description" rows="6" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Paste the job description here..."></textarea>
+                    </div>
+                    <!-- Error Display -->
+                    <div id="results" class="text-red-600 text-sm mt-2"></div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end">
+                        <button type="submit" id="analyze-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <span id="btn-text">Analyze Resume</span>
+                            <span id="spinner" class="hidden ml-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section (Initially hidden) -->
+            <div id="results-section" class="hidden">
+                <!-- Basic Analytics -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Basic Resume Analysis</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- ATS Score Card -->
+                        <div class="bg-blue-50 rounded-lg p-6 border border-blue-100">
+                            <h3 class="text-lg font-medium text-blue-800 mb-2">ATS Score</h3>
+                            <div class="flex items-center justify-center my-4">
+                                <div class="relative w-32 h-32">
+                                    <svg class="w-full h-full" viewBox="0 0 36 36">
+                                        <path d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none"
+                                            stroke="#E5E7EB"
+                                            stroke-width="3"
+                                        />
+                                        <path id="ats-score-circle" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none"
+                                            stroke="#2563EB"
+                                            stroke-width="3"
+                                            stroke-dasharray="78, 100"
+                                            stroke-linecap="round"
+                                        />
+                                    </svg>
+                                    <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                                        <span id="ats-score-value" class="text-2xl font-bold text-blue-800">78%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="ats-score-description" class="text-sm text-blue-700 text-center">Better than 65% of analyzed resumes</p>
+                        </div>
+
+                        <!-- Sectional Analysis -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Sectional Analysis</h3>
+                            <div class="space-y-4" id="sectional-analysis">
+                                <!-- Will be populated by JavaScript -->
+                                <div class="animate-pulse">
+                                    <div class="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Improvement Suggestions -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Improvement Suggestions</h3>
+                        <ul class="space-y-3" id="basic-suggestions">
+                            <!-- Will be populated by JavaScript -->
+                            <li class="animate-pulse flex items-start">
+                                <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-2">
+                                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-3/4 mt-2"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Job Matching Analytics -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Job Matching Analysis</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- Suitability Score -->
+                        <div class="bg-indigo-50 rounded-lg p-6 border border-indigo-100">
+                            <h3 class="text-lg font-medium text-indigo-800 mb-2">Suitability Score</h3>
+                            <div class="flex items-center justify-center my-4">
+                                <div class="relative w-32 h-32">
+                                    <svg class="w-full h-full" viewBox="0 0 36 36">
+                                        <path d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none"
+                                            stroke="#E5E7EB"
+                                            stroke-width="3"
+                                        />
+                                        <path id="suitability-score-circle" d="M18 2.0845
+                                            a 15.9155 15.9155 0 0 1 0 31.831
+                                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            fill="none"
+                                            stroke="#4F46E5"
+                                            stroke-width="3"
+                                            stroke-dasharray="65, 100"
+                                            stroke-linecap="round"
+                                        />
+                                    </svg>
+                                    <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                                        <span id="suitability-score-value" class="text-2xl font-bold text-indigo-800">65%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="suitability-score-description" class="text-sm text-indigo-700 text-center">Good match for the position</p>
+                        </div>
+
+                        <!-- Keyword Coverage -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Keyword Coverage</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="keyword-coverage">
+                                <!-- Will be populated by JavaScript -->
+                                <div class="animate-pulse bg-gray-100 rounded p-3">
+                                    <div class="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                                    <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sectional Matching -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Sectional Matching</h3>
+                        <div class="space-y-6" id="sectional-matching">
+                            <!-- Will be populated by JavaScript -->
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-gray-200 rounded w-1/3 mb-3"></div>
+                                <div class="space-y-2">
+                                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job-Specific Suggestions -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Job-Specific Suggestions</h3>
+                        <ul class="space-y-3" id="job-suggestions">
+                            <!-- Will be populated by JavaScript -->
+                            <li class="animate-pulse flex items-start">
+                                <div class="flex-shrink-0 h-5 w-5 text-indigo-500 mt-0.5">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-2">
+                                    <div class="h-4 bg-gray-200 rounded w-full"></div>
+                                    <div class="h-4 bg-gray-200 rounded w-3/4 mt-2"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">Ready to Analyze</h3>
+                <p class="mt-1 text-sm text-gray-500">Fill out the form above to analyze your resume against a job description.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize UI elements
+    const analysisForm = document.getElementById('analysis-form');
+    const resultsSection = document.getElementById('results-section');
+    const emptyState = document.getElementById('empty-state');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btn-text');
+    const resumeSelect = document.getElementById('resume-select');
+    const errorDisplay = document.getElementById('results');
+
+    // Fetch user's resumes and populate dropdown
+    async function loadResumes() {
+        try {
+            const userData = API.getUser();
+            const resumes = userData.resume_data || [];
+            
+            // Clear existing options
+            resumeSelect.innerHTML = '<option value="">-- Select a resume --</option>';
+            
+            // Add resume options
+            resumes.forEach(resume => {
+                const option = document.createElement('option');
+                option.value = resume.id;
+                option.textContent = resume.title;
+                resumeSelect.appendChild(option);
+            });
+            
+        } catch (error) {
+            console.error('Error loading resumes:', error);
+            // Show error to user
+        }
+    }
+
+    // Handle form submission
+    analysisForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorDisplay.textContent = ''; // Clear previous errors
+        
+        const resumeId = resumeSelect.value;
+        const jobTitle = document.getElementById('job-title').value;
+        const jobDescription = document.getElementById('job-description').value;
+        
+        // Validate inputs
+        if (!resumeId || !jobTitle || !jobDescription) {
+            errorDisplay.textContent = 'Please fill out all fields.';
+            return;
+        }
+        
+        // Show loading state
+        toggleSpinner(true);
+
+        setTimeout( async () => {
+            try {
+                const response = await analyzeResume(resumeId, jobTitle, jobDescription);
+
+                // Check if response is empty
+                if (!response || Object.keys(response).length === 0){
+
+                } else {
+                
+                    // Hide empty state and show results
+                    emptyState.classList.add('hidden');
+                    resultsSection.classList.remove('hidden');
+                    
+                    // Update UI with analysis results
+                    updateAnalysisResults(response);
+                }
+            } catch (error) {
+                console.error('Analysis error:', error);
+                errorDisplay.textContent = `${error.message}`;
+            } finally {
+                toggleSpinner(false);
+            }
+        }, 2000);
+    });
+
+    // Toggle spinner state
+    function toggleSpinner(show) {
+        if (show) {
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'Analyzing...';
+            analyzeBtn.disabled = true;
+        } else {
+            spinner.classList.add('hidden');
+            btnText.textContent = 'Analyze Resume';
+            analyzeBtn.disabled = false;
+        }
+    }
+
+    async function analyzeResume(resumeId, jobTitle, jobDescription) {
+        const queryData = {
+            resume_id: parseInt(resumeId),
+            job_title: jobTitle,
+            job_description: jobDescription
+        };
+        try {
+            const response = await API.request('/api/user/resume/analysis/', 'POST', queryData);
+            
+            if (!response.ok) throw new Error(response.statusText);
+            const data = await response.json();
+            if (data.status !== 1) throw new Error(data.message);
+
+            return data.analysis_result;
+            
+        } catch (error) {
+            console.error('Upload error: ', error);
+            errorDisplay.textContent = `Error: ${error.message}`;
+            return {};
+        }
+    }
+
+    // Update UI with analysis results
+    function updateAnalysisResults(data) {
+        // Basic Analysis
+        document.getElementById('ats-score-value').textContent = `${data.basic_analysis.ats_score}%`;
+        document.getElementById('ats-score-circle').setAttribute('stroke-dasharray', `${data.basic_analysis.ats_score}, 100`);
+        document.getElementById('ats-score-description').textContent = `Better than ${data.basic_analysis.score_comparison}% of analyzed resumes`;
+        
+        // Sectional Analysis
+        const sectionalAnalysis = document.getElementById('sectional-analysis');
+        sectionalAnalysis.innerHTML = '';
+        
+        for (const [section, score] of Object.entries(data.basic_analysis.sectional_analysis)) {
+            const sectionEl = document.createElement('div');
+            sectionEl.innerHTML = `
+                <h4 class="text-sm font-medium text-gray-700 mb-1 capitalize">${section}</h4>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-3">
+                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${score}%"></div>
+                </div>
+            `;
+            sectionalAnalysis.appendChild(sectionEl);
+        }
+        
+        // Basic Suggestions
+        const basicSuggestions = document.getElementById('basic-suggestions');
+        basicSuggestions.innerHTML = '';
+        
+        data.basic_analysis.suggestions.forEach(suggestion => {
+            const li = document.createElement('li');
+            li.className = 'flex items-start';
+            li.innerHTML = `
+                <div class="flex-shrink-0 h-5 w-5 text-blue-500 mt-0.5">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="ml-2 text-sm text-gray-700">${suggestion}</p>
+            `;
+            basicSuggestions.appendChild(li);
+        });
+        
+        // Job Matching Analysis
+        document.getElementById('suitability-score-value').textContent = `${data.job_matching.suitability_score}%`;
+        document.getElementById('suitability-score-circle').setAttribute('stroke-dasharray', `${data.job_matching.suitability_score}, 100`);
+        document.getElementById('suitability-score-description').textContent = interpretScore(parseInt(data.job_matching.suitability_score));
+        
+        // Keyword Coverage
+        const keywordCoverage = document.getElementById('keyword-coverage');
+        keywordCoverage.innerHTML = '';
+        
+        for (const [category, percentage] of Object.entries(data.job_matching.keyword_coverage)) {
+            const coverageEl = document.createElement('div');
+            coverageEl.className = 'bg-gray-50 rounded p-3 border border-gray-200';
+            coverageEl.innerHTML = `
+                <h4 class="text-sm font-medium text-gray-700 mb-1">${category}</h4>
+                <p class="text-2xl font-bold text-indigo-600">${percentage}%</p>
+            `;
+            keywordCoverage.appendChild(coverageEl);
+        }
+        
+        // Sectional Matching
+        const sectionalMatching = document.getElementById('sectional-matching');
+        sectionalMatching.innerHTML = '';
+        
+        for (const [section, details] of Object.entries(data.job_matching.sectional_matching)) {
+            const sectionEl = document.createElement('div');
+            sectionEl.className = 'bg-gray-50 rounded-lg p-4 border border-gray-200';
+            
+            let matchedList = '';
+            if (details.matched && details.matched.length > 0) {
+                matchedList = `
+                    <div class="mt-2">
+                        <span class="text-xs font-medium text-green-700">Matched:</span>
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            ${details.matched.map(item => `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">${item}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            let missingList = '';
+            if (details.missing && details.missing.length > 0) {
+                missingList = `
+                    <div class="mt-2">
+                        <span class="text-xs font-medium text-red-700">Missing:</span>
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            ${details.missing.map(item => `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">${item}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            sectionEl.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <h4 class="text-sm font-medium text-gray-700 capitalize">${section}</h4>
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full ${details.match_percentage >= 70 ? 'bg-green-100 text-green-800' : details.match_percentage >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                        ${details.match_percentage}% match
+                    </span>
+                </div>
+                ${matchedList}
+                ${missingList}
+            `;
+            sectionalMatching.appendChild(sectionEl);
+        }
+        
+        // Job Suggestions
+        const jobSuggestions = document.getElementById('job-suggestions');
+        jobSuggestions.innerHTML = '';
+        
+        data.job_matching.suggestions.forEach(suggestion => {
+            const li = document.createElement('li');
+            li.className = 'flex items-start';
+            li.innerHTML = `
+                <div class="flex-shrink-0 h-5 w-5 text-indigo-500 mt-0.5">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="ml-2 text-sm text-gray-700">${suggestion}</p>
+            `;
+            jobSuggestions.appendChild(li);
+        });
+
+        function interpretScore(suitabilityScore) {
+            if (suitabilityScore >= 90) return 'Excellent match! Go on ... ✅';
+            if (suitabilityScore >= 75) return 'You\'re a strong candidate 👍';
+            if (suitabilityScore >= 60) return 'Has a good potential 🤔';
+            if (suitabilityScore >= 40) return 'Your resume needs more work ⚠️';
+            return 'Poor match ❌';
+        }
+    }
+
+    // Initial load
+    loadResumes();
+});
+</script>
+{% endblock %}

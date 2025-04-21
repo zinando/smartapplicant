@@ -4,9 +4,18 @@ import PyPDF2
 import io
 import re
 import mimetypes
+from .resume_parser import ResumeParser
+from .resources import job_fields, technical_keywords, soft_skills_keywords, tools_tech
+from fuzzywuzzy import process
 
 # Load NLP model
-nlp = spacy.load("en_core_web_md")
+nlp = spacy.load("en_core_web_lg")
+
+def get_similarity_score(text1, text2):
+    """Calculate similarity score between two texts using spaCy."""
+    doc1 = nlp(text1)
+    doc2 = nlp(text2)
+    return doc1.similarity(doc2)
 
 def convert_words_to_numbers(text):
     number_words = {
@@ -203,3 +212,358 @@ def parse_resume(text):
         "education": extract_education(text),
         "certificates": extract_certificates(text)
     }
+
+def analyze_metadata(analysis_data:dict):
+    """Checks relevant metadata from the analysis results."""
+    data = ['name', 'email', 'phone', 'location']
+    result_data = []
+
+    for key in data:
+        if key in analysis_data:
+            if not analysis_data[key]:
+                break
+            result_data.append(key)
+    result_data_count = len(result_data)
+    total_data_count = len(data)
+    if result_data_count == total_data_count:
+        score = 100
+    elif result_data_count > 0:
+        score = int((result_data_count / total_data_count) * 100)
+    else:
+        score = 0
+    return {'score': score, 'matched': result_data, 'missing': [key for key in data if key not in result_data]}
+
+def analyze_education(resume_analysis_data:list, jd_analysis_data:list):
+    """Checks relevant education from the analysis results."""
+    
+    jd_degrees = [education.get('degree', None) for education in jd_analysis_data if education.get('degree', None) != None]
+    resume_degrees = [education.get('degree', None) for education in resume_analysis_data if education.get('degree', None) != None]
+
+    # Remove duplicates
+    jd_degrees = list(set(jd_degrees))
+    resume_degrees = list(set(resume_degrees))
+
+    result_data = [degree for degree in resume_degrees if degree in jd_degrees]
+    
+    # compute the score
+    result_data_count = len(result_data)
+    total_data_count = len(jd_degrees)
+    if result_data_count == total_data_count:
+        score = 100
+    elif result_data_count > 0:
+        score = int((result_data_count / total_data_count) * 100)
+    else:
+        score = 0
+
+    return {'score': score, 'matched': result_data, 'missing': [degree for degree in jd_degrees if degree not in result_data]}
+
+def analyze_skills(resume_analysis_data:list, jd_analysis_data:list, basic=False):
+    """Checks relevant skills from the analysis results."""
+    jd_skills = [skill for skill in jd_analysis_data if skill]
+    resume_skills = [skill for skill in resume_analysis_data if skill]
+
+    if len(jd_skills) == 0:
+        return {'score': 100, 'matched': [], 'missing': []}
+    elif len(resume_skills) == 0:
+        return {'score': 0, 'matched': [], 'missing': jd_skills}
+
+    # Remove duplicates
+    jd_skills = list(set(jd_skills))
+    resume_skills = list(set(resume_skills))
+
+    # find skills in rsume skills data that are similar to jd skills data
+    result_data = []
+    missing_data = []
+    for jd_skill in jd_skills:
+        for resume_skill in resume_skills:
+            if get_similarity_score(resume_skill, jd_skill) > 0.8:
+                result_data.append(jd_skill)
+                break
+        else:
+            missing_data.append(jd_skill)
+    
+    # compute the score
+    result_data_count = len(result_data)
+    total_data_count = len(jd_skills)
+
+    if result_data_count == total_data_count:
+        score = 100
+    elif result_data_count > 0 and not basic:
+        score = int((result_data_count / total_data_count) * 100)
+    elif result_data_count > 0:
+        score = int((result_data_count / len(resume_analysis_data)) * 100)
+    else:
+        score = 0
+
+    return {'score': score, 'matched': result_data, 'missing': missing_data}
+
+def analyze_experience(resume_analysis_data, jd_analysis_data):
+    """Checks relevant experience from the analysis results."""
+    #print(f"JD Experience data: {jd_analysis_data}, Resume Experience data: {resume_analysis_data}")
+    jd_experience = re.search(r"(\d+)\+?\s*(years|yrs)", str(jd_analysis_data))
+    resume_experience = re.search(r"(\d+)\+?\s*(years|yrs)", str(resume_analysis_data))
+    #print(f"JD Experience: {jd_experience}, Resume Experience: {resume_experience}")
+
+    if not jd_experience:
+        return {'score': 100, 'matched': [], 'missing': []}
+    elif not resume_experience:
+        return {'score': 0, 'matched': [], 'missing': [jd_analysis_data]}
+
+    jd_years = int(jd_experience.group(1))
+    resume_years = int(resume_experience.group(1))
+
+    if resume_years >= jd_years:
+        score = 100
+        jd_analysis_data = ''
+    else:
+        score = int((resume_years / jd_years) * 100)
+
+    return {'score': score, 'matched': [resume_analysis_data], 'missing': [jd_analysis_data] if jd_analysis_data != '' else []}
+
+def analyze_certificates(resume_analysis_data:list, jd_analysis_data:list):
+    """Checks relevant certificates from the analysis results by similarity comparison."""
+    jd_certificates = [cert.get('name', None) for cert in jd_analysis_data if cert.get('name', None) != None]
+    resume_certificates = [cert.get('name', None) for cert in resume_analysis_data if cert.get('name', None) != None]
+
+    # Remove duplicates
+    jd_certificates = list(set(jd_certificates))
+    resume_certificates = list(set(resume_certificates))
+
+    result_data = []
+    missing_data = []
+
+    for jd_cert in jd_certificates:
+        for resume_cert in resume_certificates:
+            if get_similarity_score(jd_cert, resume_cert) > 0.8:
+                result_data.append(jd_cert)
+                break
+        else:
+            missing_data.append(jd_cert)
+    
+    # compute the score
+    result_data_count = len(result_data)
+    total_data_count = len(jd_certificates)
+
+    if result_data_count == total_data_count:
+        score = 100
+    elif result_data_count > 0:
+        score = int((result_data_count / total_data_count) * 100)
+    else:
+        score = 0
+
+    return {'score': score, 'matched': result_data, 'missing': missing_data}
+
+def calculate_suitability_score(sectional_analysis:dict):
+    """Calculates suitability score as an average of the analysis score for each section."""
+    total_score = 0
+    count = 0
+
+    for key, value in sectional_analysis.items():
+        if value > 0:
+            total_score += value
+            count += 1
+
+    if count == 0:
+        return 0
+    else:
+        return round(total_score / count, 2)
+
+def resume_sectional_analysis(parsed_data, known_skills=[]):
+    """
+    Perform sectional analysis on parsed resume data.
+    Returns: Dictionary with analysis results.
+    """
+    # calculate metadata score: parsed_data['metadata'] is dict, check that name, email, and phone are not empty
+    # get score as a percentage of the total number of metadata fields with values versus expected fields: name, phone, email
+    metadata_score = analyze_metadata(parsed_data['metadata']).get('score', 0)
+
+    # calculate education score: parsed_data['education'] is list of dicts, check that degree, institution, and duration are not empty
+    # get score as a percentage of expected education data present versus expected: OND/HND AND BSc/MSc/PhD
+    edu_total = 2
+    resume_edu_count = 0
+    for edu in parsed_data['education']:
+        if edu.get('degree') == 'OND' or edu.get('degree') == 'HND':
+            resume_edu_count += 1
+            break
+        elif edu.get('degree') == 'BSc' or edu.get('degree') == 'MSc' or edu.get('degree') == 'PhD':
+            resume_edu_count += 1
+            break
+    if resume_edu_count == 2:
+        education_score = 100
+    elif resume_edu_count > 0:
+        education_score = int((resume_edu_count / edu_total) * 100)
+    else:
+        education_score = 0
+    
+    # claculate experience score as a ratio of number of yrs of expriece versus industry std: 3 years
+    resume_experience = re.search(r"(\d+)\+?\s*(years|yrs)", str(parsed_data['experience_duration']))
+    resume_experience_score = 0
+    expected_years = 3
+    resume_years = 0
+
+    if resume_experience:
+        resume_years = int(resume_experience.group(1))
+
+    if resume_years >= expected_years:
+        resume_experience_score = 100
+    elif resume_years > 0:
+        resume_experience_score = int((resume_years / expected_years) * 100)
+    
+    # calculate certification as a ration of number of certificates found in resume vs expected: 2
+    # Every resume is assumed to have at least one school certification and one non-school certification
+    expected_cert = 2
+    resume_cert = 0
+    resume_cert_score = 0
+
+    if education_score > 0:
+        resume_cert += 1
+    if len(parsed_data['certifications']) > 0:
+        resume_cert += 1
+    
+    if resume_cert == expected_cert:
+        resume_cert_score = 100
+    elif resume_cert > 0:
+        resume_cert_score = int((resume_cert / expected_cert) * 100)
+
+    
+    return {
+        "metadata": metadata_score,
+        "education": education_score,
+        "skills": 45, #analyze_skills(parsed_data['skills'], known_skills, basic=True).get('score', 0),
+        "experience": resume_experience_score,
+        "certifications": resume_cert_score
+    }
+    
+def match_job_field(input_title, field_keywords):
+    """Find the best-matching field for any job title"""
+    # Flatten all job titles across fields
+    all_titles = []
+    for field, titles in job_fields.items():
+        all_titles.extend([(title, field) for title in titles])
+    
+    # Extract just the titles for matching
+    title_strings = [title for title, _ in all_titles]
+    
+    # Get best match (returns tuple: (matched_title, score, index))
+    best_match = process.extractOne(input_title, title_strings)
+    
+    if best_match:
+        matched_title = best_match[0]
+        # Retrieve the field for the matched title
+        for title, field in all_titles:
+            if title == matched_title:
+                return {
+                    "input_title": input_title,
+                    "matched_job_title": matched_title,
+                    "field": field,
+                    "expected_keywords": field_keywords[field]
+                }
+    
+    # Fallback for unknown titles
+    return {
+        "input_title": input_title,
+        "matched_job_title": None,
+        "field": "general",
+        "expected_keywords": {}  # Empty template
+    }
+
+def calculate_keyword_coverage(resume_text, expected_keywords):
+    """Test resume against field-specific keywords"""
+    coverage = {}
+    resume_text_lower = resume_text.lower()
+    
+    for category, keywords in expected_keywords.items():
+        found = 0
+        for keyword in keywords:
+            # if keyword.lower() in resume_text_lower:
+            if process.extractOne(keyword.lower(), resume_text_lower, score_cutoff=85):
+                found += 1
+        coverage[category] = round((found / len(keywords)) * 100) if keywords else 0
+    
+    return coverage
+
+def analyze_resume_with_jd(resume_text, job_description, job_title=''):
+    """Analyze resume against a job description."""
+    try:
+        #print(f'Analyzing resume: {resume_text}')
+        rar = ResumeParser(resume_text)
+        resume_analysis_results = rar.parse_all()
+        jd_ar = ResumeParser(job_description)
+        jd_analysis_results = jd_ar.parse_all()
+
+        field_matcher = match_job_field(job_title, technical_keywords)
+        kw_data = calculate_keyword_coverage(resume_text, field_matcher['expected_keywords'])
+
+        # print(f'tech keywords: {kw_data}')
+
+        # Parse resume text
+        resume_data = parse_resume(resume_text)
+        #print(f'Resume {resume_analysis_results["education"]}')
+        #print(f'JD {jd_analysis_results["education"]}')
+        
+        sectional_analysis_data = resume_sectional_analysis(resume_analysis_results, rar.known_skills['all'])
+
+        analyzed_data = {
+            'metadata': analyze_metadata(resume_analysis_results['metadata']),
+            'education': analyze_education(resume_analysis_results['education'], jd_analysis_results['education']),
+            'skills': analyze_skills(resume_analysis_results['skills'], jd_analysis_results['skills']),
+            'experience': analyze_experience(resume_analysis_results['experience_duration'], jd_analysis_results['experience_duration']),
+            'certifications': analyze_certificates(resume_analysis_results['certifications'], jd_analysis_results['certifications'])
+        }
+        
+        keyword_coverage = {
+                    "Experience Level": analyzed_data['experience'].get('score',0),
+                    "Education Requirements": analyzed_data['education'].get('score',0)
+                }
+        kw_data.update(keyword_coverage)
+        ats_score = calculate_ats_score(resume_data)
+        analysis_results = {
+            "basic_analysis": {
+                "ats_score": ats_score,
+                "score_comparison": 65,
+                "sectional_analysis": sectional_analysis_data,
+                "suggestions": [
+                    "Add more quantifiable achievements in your experience section",
+                    "Include relevant certifications to boost your score",
+                    "Ensure your contact information is complete and professional"
+                ]
+            },
+            "job_matching": {
+                "suitability_score": calculate_suitability_score(kw_data | {'ats_score': ats_score}),
+                "keyword_coverage": kw_data,
+                "sectional_matching": {
+                    "skills": {
+                        "match_percentage": analyzed_data['skills'].get('score',0),
+                        "matched": analyzed_data['skills'].get('matched',[]),
+                        "missing": analyzed_data['skills'].get('missing',[])
+                    },
+                    "education": {
+                        "match_percentage": analyzed_data['education'].get('score',0),
+                        "matched": analyzed_data['education'].get('matched',[]),
+                        "missing": analyzed_data['education'].get('missing',[])
+                    },
+                    "experience": {
+                        "match_percentage": analyzed_data['experience'].get('score',0),
+                        "matched": analyzed_data['experience'].get('matched',[]),
+                        "missing": analyzed_data['experience'].get('missing',[])
+                    },
+                    "certifications": {
+                        "match_percentage": analyzed_data['certifications'].get('score',0),
+                        "matched": analyzed_data['certifications'].get('matched',[]),
+                        "missing": analyzed_data['certifications'].get('missing',[])
+                    }
+                },
+            
+                "suggestions": [
+                    "Add missing keywords like 'TypeScript' and 'GraphQL' to your skills section",
+                    "Highlight your computer science education if applicable",
+                    "Mention any agile methodology experience you have"
+                ]
+            }
+        }
+        return analysis_results
+    except Exception as e:
+        print(e)
+        raise Exception(str(e))
+
+

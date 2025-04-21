@@ -65,21 +65,29 @@ const ApiService = (function() {
                 _notifyListeners();
             },
             
-            request: async function(url, method = 'GET', data = null) {
+            request: async function request(url, method = 'GET', data = null, isFormData = false) {
                 const config = {
                     method,
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: {}
                 };
-                
+            
+                // Don't set Content-Type for FormData - the browser will set it automatically
+                if (!isFormData) {
+                    config.headers['Content-Type'] = 'application/json';
+                }
+            
                 if (accessToken) {
                     config.headers.Authorization = `Bearer ${accessToken}`;
                 }
-                
-                if (data) config.body = JSON.stringify(data);
-                
+            
+                // Handle both JSON and FormData
+                if (data) {
+                    config.body = isFormData ? data : JSON.stringify(data);
+                }
+            
                 let response = await fetch(`${baseUrl}${url}`, config);
-                
-                // Handle token refresh
+            
+                // Token refresh logic remains the same
                 if (response.status === 401 && refreshToken) {
                     try {
                         const newToken = await _refreshTokens();
@@ -90,11 +98,11 @@ const ApiService = (function() {
                         throw error;
                     }
                 }
-                
+            
                 if (response.status === 401) {
                     _clearUserData();
                 }
-                
+            
                 return response;
             },
             
