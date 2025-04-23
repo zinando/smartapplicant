@@ -7,6 +7,7 @@ import mimetypes
 from .resume_parser import ResumeParser
 from .resources import job_fields, technical_keywords, soft_skills_keywords, tools_tech
 from fuzzywuzzy import process
+from .ai import get_improvement_suggestions, get_basic_improvement_suggestion
 
 # Load NLP model
 nlp = spacy.load("en_core_web_lg")
@@ -87,11 +88,6 @@ def extract_name(text):
         if ent.label_ == "PERSON":
             return ent.text
     return None
-
-def extract_educationxx(text):
-    """Extract education using regex."""
-    edu_match = re.search(r"(bachelor|master|b\.sc|m\.sc|ph\.d|diploma).{0,50}?(university|college)?", text, re.IGNORECASE)
-    return edu_match.group(0).strip() if edu_match else None
 
 def extract_education(text):
     """
@@ -233,31 +229,104 @@ def analyze_metadata(analysis_data:dict):
         score = 0
     return {'score': score, 'matched': result_data, 'missing': [key for key in data if key not in result_data]}
 
-def analyze_education(resume_analysis_data:list, jd_analysis_data:list):
-    """Checks relevant education from the analysis results."""
+def analyze_education(resume_analysis_data: list, jd_analysis_data: list) -> dict:
+    """
+    Strictly checks if resume contains ANY of the JD-listed qualifications.
+    Scores 100% if resume meets at least one JD requirement (even if lower in hierarchy).
+    Scores 0% if resume has none of the specified qualifications.
     
-    jd_degrees = [education.get('degree', None) for education in jd_analysis_data if education.get('degree', None) != None]
-    resume_degrees = [education.get('degree', None) for education in resume_analysis_data if education.get('degree', None) != None]
-
-    # Remove duplicates
-    jd_degrees = list(set(jd_degrees))
-    resume_degrees = list(set(resume_degrees))
-
-    result_data = [degree for degree in resume_degrees if degree in jd_degrees]
+    Returns: {
+        'score': 0 or 100,
+        'matched': [list of matched degrees],
+        'missing': [list of missing JD degrees],
+        'highest_qualification': str or None
+    }
+    """
+    # Normalize degrees (lowercase, strip whitespace)
+    resume_degrees = {edu["degree"].lower().strip() for edu in resume_analysis_data if edu.get("degree")}
+    jd_degrees = {edu["degree"].lower().strip() for edu in jd_analysis_data if edu.get("degree")}
     
-    # compute the score
-    result_data_count = len(result_data)
-    total_data_count = len(jd_degrees)
-    if result_data_count == total_data_count:
-        score = 100
-    elif result_data_count > 0:
-        score = int((result_data_count / total_data_count) * 100)
+    # Qualification hierarchy (customize as needed)
+    HIERARCHY = {
+        'phd': 4,
+        'm.sc': 3, 'm.tech': 3, 'master': 3,
+        'b.sc': 2, 'b.tech': 2, 'bachelor': 2, 
+        'hnd': 1, 'ond': 1, 'ond/hnd': 1,
+        'associate': 0
+    }
+    
+    # Case 1: No JD requirements → automatic pass
+    if not jd_degrees:
+        return {
+            'score': 100.0,
+            'matched': [],
+            'missing': [],
+            'highest_qualification': max(resume_degrees, key=lambda x: HIERARCHY.get(x, 0)) if resume_degrees else None
+        }
+    
+    # Case 2: Check for ANY match (strict)
+    matched_degrees = list(resume_degrees & jd_degrees)
+    missing_degrees = list(jd_degrees - resume_degrees)
+    
+    # Score 0% if no overlap
+    if not matched_degrees:
+        return {
+            'score': 0.0,
+            'matched': [],
+            'missing': missing_degrees,
+            'highest_qualification': max(resume_degrees, key=lambda x: HIERARCHY.get(x, 0)) if resume_degrees else None
+        }
+    
+    # Case 3: At least one match → score based on hierarchy position
+    # Get hierarchy values for all JD degrees and matched resume degrees
+    jd_levels = [HIERARCHY.get(deg, 0) for deg in jd_degrees]
+    resume_levels = [HIERARCHY.get(deg, 0) for deg in matched_degrees]
+    
+    # Calculate score based on highest matched level vs highest JD level
+    max_jd_level = max(jd_levels) if jd_levels else 0
+    max_resume_level = max(resume_levels) if resume_levels else 0
+    
+    # Score is the ratio of resume's highest match to JD's highest requirement
+    # (e.g., if JD wants PhD (4) and resume has MSc (3), score = 3/4 = 75%)
+    score = (max_resume_level / max_jd_level) * 100 if max_jd_level > 0 else 100.0
+    
+    return {
+        'score': round(score, 1),  # Round to 1 decimal place
+        'matched': matched_degrees,
+        'missing': missing_degrees,
+        'highest_qualification': max(matched_degrees, key=lambda x: HIERARCHY.get(x, 0))
+    }
+
+def analyze_skills(jd_analysis_data:list, resume_text:str):
+    """Use the skills extracted from resume to match content of the jd"""
+    jd_skills = [skill for skill in jd_analysis_data if skill]
+    jd_skills = list(set(jd_skills))
+    result_data = []
+    missing_data = []
+    score = 0
+
+
+    if len(jd_analysis_data) > 0:
+        for skill in jd_skills:
+            if process.extractOne(skill, resume_text, score_cutoff=85):
+                result_data.append(skill)
+            else:
+                missing_data.append(skill)
+        
+        # compute the score
+        result_data_count = len(result_data)
+        total_data_count = len(jd_skills)
+
+        if result_data_count == total_data_count:
+            score = 100
+        elif result_data_count > 0:
+            score = int((result_data_count / total_data_count) * 100)
+
     else:
-        score = 0
+        score = 100
+    return {'score': score, 'matched': result_data, 'missing': missing_data}
 
-    return {'score': score, 'matched': result_data, 'missing': [degree for degree in jd_degrees if degree not in result_data]}
-
-def analyze_skills(resume_analysis_data:list, jd_analysis_data:list, basic=False):
+def analyze_skillsxxxxx(resume_analysis_data:list, jd_analysis_data:list, basic=False):
     """Checks relevant skills from the analysis results."""
     jd_skills = [skill for skill in jd_analysis_data if skill]
     resume_skills = [skill for skill in resume_analysis_data if skill]
@@ -379,21 +448,12 @@ def resume_sectional_analysis(parsed_data, known_skills=[]):
 
     # calculate education score: parsed_data['education'] is list of dicts, check that degree, institution, and duration are not empty
     # get score as a percentage of expected education data present versus expected: OND/HND AND BSc/MSc/PhD
-    edu_total = 2
-    resume_edu_count = 0
-    for edu in parsed_data['education']:
-        if edu.get('degree') == 'OND' or edu.get('degree') == 'HND':
-            resume_edu_count += 1
-            break
-        elif edu.get('degree') == 'BSc' or edu.get('degree') == 'MSc' or edu.get('degree') == 'PhD':
-            resume_edu_count += 1
-            break
-    if resume_edu_count == 2:
+    education_score = 0
+    degrees = [edu.get('degree', None) for edu in parsed_data['education'] if edu.get('degree', None) != None]
+    if 'B.Sc' in degrees or 'M.Sc' in degrees or 'PhD' in degrees or 'HND' in degrees:
         education_score = 100
-    elif resume_edu_count > 0:
-        education_score = int((resume_edu_count / edu_total) * 100)
-    else:
-        education_score = 0
+    elif 'OND' in degrees or 'Associate' in degrees:
+        education_score = 50
     
     # claculate experience score as a ratio of number of yrs of expriece versus industry std: 3 years
     resume_experience = re.search(r"(\d+)\+?\s*(years|yrs)", str(parsed_data['experience_duration']))
@@ -482,7 +542,7 @@ def calculate_keyword_coverage(resume_text, expected_keywords):
     
     return coverage
 
-def analyze_resume_with_jd(resume_text, job_description, job_title=''):
+def analyze_resume_with_jd(resume_text, job_description, user, job_title='',):
     """Analyze resume against a job description."""
     try:
         #print(f'Analyzing resume: {resume_text}')
@@ -503,10 +563,13 @@ def analyze_resume_with_jd(resume_text, job_description, job_title=''):
         
         sectional_analysis_data = resume_sectional_analysis(resume_analysis_results, rar.known_skills['all'])
 
+        basic_suggestions = get_basic_improvement_suggestion(sectional_analysis_data)
+
         analyzed_data = {
             'metadata': analyze_metadata(resume_analysis_results['metadata']),
             'education': analyze_education(resume_analysis_results['education'], jd_analysis_results['education']),
-            'skills': analyze_skills(resume_analysis_results['skills'], jd_analysis_results['skills']),
+            # 'skills': analyze_skills(resume_analysis_results['skills'], jd_analysis_results['skills']),
+            'skills': analyze_skills(jd_analysis_results['skills'], resume_text),
             'experience': analyze_experience(resume_analysis_results['experience_duration'], jd_analysis_results['experience_duration']),
             'certifications': analyze_certificates(resume_analysis_results['certifications'], jd_analysis_results['certifications'])
         }
@@ -517,16 +580,22 @@ def analyze_resume_with_jd(resume_text, job_description, job_title=''):
                 }
         kw_data.update(keyword_coverage)
         ats_score = calculate_ats_score(resume_data)
+        suggestions = get_improvement_suggestions(resume_text, user.id, job_description)
+        if suggestions == '':
+            suggestions = [
+                    "Add missing keywords like 'TypeScript' and 'GraphQL' to your skills section",
+                    "Highlight your computer science education if applicable",
+                    "Mention any agile methodology experience you have"
+                ]
+        else:
+            suggestions = [part.strip() for part in suggestions.split(';') if part.strip()]
+            #print(suggestions)
         analysis_results = {
             "basic_analysis": {
                 "ats_score": ats_score,
                 "score_comparison": 65,
                 "sectional_analysis": sectional_analysis_data,
-                "suggestions": [
-                    "Add more quantifiable achievements in your experience section",
-                    "Include relevant certifications to boost your score",
-                    "Ensure your contact information is complete and professional"
-                ]
+                "suggestions": basic_suggestions
             },
             "job_matching": {
                 "suitability_score": calculate_suitability_score(kw_data | {'ats_score': ats_score}),
@@ -554,16 +623,12 @@ def analyze_resume_with_jd(resume_text, job_description, job_title=''):
                     }
                 },
             
-                "suggestions": [
-                    "Add missing keywords like 'TypeScript' and 'GraphQL' to your skills section",
-                    "Highlight your computer science education if applicable",
-                    "Mention any agile methodology experience you have"
-                ]
+                "suggestions": suggestions
             }
         }
         return analysis_results
     except Exception as e:
-        print(e)
+        #print(e)
         raise Exception(str(e))
 
 

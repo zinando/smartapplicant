@@ -200,19 +200,27 @@ class ResumeParser:
         
         # Degree standardization mapping
         DEGREE_STANDARDIZATION = {
-            # National Diploma variants (OND/HND)
-            r'\b(national diploma|ordinary national diploma|nd|ond)(\s*/\s*)?(hnd|higher national diploma)?\b': 'OND',
-            r'\b(higher national diploma|hnd)(\s*/\s*)?(nd|ond|national diploma)?\b': 'HND',
+            # New combined OND/HND pattern
+            r'\b(ond|ordinary national diploma)\s*/\s*(hnd|higher national diploma)\b': 'OND/HND',
+            r'\b(hnd|higher national diploma)\s*/\s*(ond|ordinary national diploma)\b': 'OND/HND',
+            
+            # Original separate OND patterns (keep these)
+            r'\b(national diploma|ordinary national diploma|nd|ond)\b': 'OND',
+            
+            # Original separate HND patterns (keep these)
+            r'\b(higher national diploma|hnd)\b': 'HND',
             
             # Bachelor variants (B.Sc/B.Eng)
             r'\b(b\.?\s?sc|bachelor of science|bs)(\s*/\s*)?(b\.?\s?eng|bachelor of engineering|beng)?\b': 'B.Sc',
             r'\b(b\.?\s?a|bachelor of arts|ba)\b': 'B.Sc',
             r'\b(b\.?\s?eng|bachelor of engineering|beng)(\s*/\s*)?(b\.?\s?sc|bachelor of science|bsc)?\b': 'B.Sc',
-
+            r'\b(b\.?\s?tech|bachelor of technology)\b': 'B.Tech',
+            
             # Master variants
             r'\b(m\.?\s?sc|master of science|ms|msc)\b': 'M.Sc',
             r'\b(m\.?\s?a|master of arts|ma)\b': 'M.Sc',
             r'\b(m\.?\s?eng|master of engineering|meng)\b': 'M.Sc',
+            r'\b(m\.?\s?tech|master of technology)\b': 'M.Tech',
 
             # PhD variants
             r'\b(ph\.?\s?d|phd|doctorate|d\.?\s?phil)\b': 'PhD',
@@ -228,7 +236,15 @@ class ResumeParser:
             
             # Pattern for institution line (contains place and dates)
             institution_match = re.search(
-                r'^(?P<institution>[^-–]+?)\s*[-–]\s*(?P<location>[^0-9]+?)\s*(?P<dates>\d{4}\s*[-–]\s*\d{4}|present|current)',
+                r'^(?P<institution>[^-–]+?)\s*[-–]\s*(?P<location>[^0-9]+?)\s*'
+                r'(?P<dates>'
+                r'(\d{4}\s*[-–]\s*(present|current))|'  # e.g., "2015–Present"
+                r'(\d{4}\s*[-–]\s*\d{4})|'             # e.g., "2015-2019"
+                r'(\w{3,9}\s\d{4}\s*[-–]\s*(present|current))|'  # e.g., "Sept 2020–Present"
+                r'(\w{3,9}\s\d{4}\s*[-–]\s*\w{3,9}\s\d{4})|'    # e.g., "Jan 2018–Dec 2022"
+                r'(\d{1,2}/\d{4}\s*[-–]\s*(present|current))|'   # e.g., "10/2015–Present"
+                r'(\d{1,2}/\d{4}\s*[-–]\s*\d{1,2}/\d{4})'       # e.g., "08/2017-05/2021"
+                r')',
                 line,
                 re.IGNORECASE
             )
@@ -273,7 +289,10 @@ class ResumeParser:
                         # Standardize the degree name
                         for pattern, standardized in DEGREE_STANDARDIZATION.items():
                             if re.search(pattern, raw_degree, re.IGNORECASE):
-                                current_entry['degree'] = standardized
+                                if standardized == 'OND/HND':
+                                    education.extend([{'degree': 'OND'},{'degree': 'HND'}])
+                                else:
+                                    current_entry['degree'] = standardized
                                 break
                         else:
                             current_entry['degree'] = raw_degree  # fallback to original if no match
@@ -308,10 +327,14 @@ class ResumeParser:
                 )
                 if degree_match and not current_entry.get('degree'):
                     raw_degree = degree_match.group('degree').strip()
+                    # print(f'Other degree: {raw_degree}')
                     # Standardize the degree name
                     for pattern, standardized in DEGREE_STANDARDIZATION.items():
                         if re.search(pattern, raw_degree, re.IGNORECASE):
-                            current_entry['degree'] = standardized
+                            if standardized == 'OND/HND':
+                                education.extend([{'degree': 'OND'},{'degree': 'HND'}])
+                            else:
+                                current_entry['degree'] = standardized
                             break
                     else:
                         current_entry['degree'] = raw_degree  # fallback to original if no match
@@ -321,12 +344,16 @@ class ResumeParser:
                 
                 elif degree_match:
                     raw_degree = degree_match.group('degree').strip()
+                    # print(f'Degree match: {raw_degree}')
                     entry = {}
 
                     # Standardize the degree name
                     for pattern, standardized in DEGREE_STANDARDIZATION.items():
                         if re.search(pattern, raw_degree, re.IGNORECASE):
-                            entry['degree'] = standardized
+                            if standardized == 'OND/HND':
+                                education.extend([{'degree': 'OND'},{'degree': 'HND'}])
+                            else:
+                                entry['degree'] = standardized
                             break
                     else:
                         entry['degree'] = raw_degree  # fallback to original if no match
@@ -350,6 +377,7 @@ class ResumeParser:
         education = make_unique_dicts(education)
         
         self.parsed_data['education'] = education
+        # print(f'Education match: {education}')
         return education
 
     def _parse_date(self, date_str):

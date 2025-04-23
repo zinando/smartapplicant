@@ -14,53 +14,63 @@ title: Analyze Resume
         </svg>
     </button>
 
-    <!-- Main content -->
-    <main class="flex-1 overflow-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Analysis Form -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Resume Analysis</h2>
-                
-                <form id="analysis-form" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Resume Selection -->
-                        <div>
-                            <label for="resume-select" class="block text-sm font-medium text-gray-700 mb-1">Select Resume</label>
-                            <select id="resume-select" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
-                                <option value="">-- Select a resume --</option>
-                                <!-- Will be populated by JavaScript -->
-                            </select>
-                        </div>
-
-                        <!-- Job Title -->
-                        <div>
-                            <label for="job-title" class="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
-                            <input type="text" id="job-title" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g. Software Engineer">
-                        </div>
-                    </div>
-
-                    <!-- Job Description -->
+    <main class="relative h-full w-full lg:w-4/5">
+        <!-- Compact Fixed Form Section -->
+        <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 lg:px-8 py-4">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Resume Analysis</h2>
+            
+            <form id="analysis-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Resume Selection -->
                     <div>
-                        <label for="job-description" class="block text-sm font-medium text-gray-700 mb-1">Job Description</label>
-                        <textarea id="job-description" rows="6" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Paste the job description here..."></textarea>
+                        <label for="resume-select" class="block text-xs font-medium text-gray-700 mb-1">Select Resume</label>
+                        <select id="resume-select" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-2.5 border">
+                            <option value="">-- Select --</option>
+                        </select>
                     </div>
-                    <!-- Error Display -->
-                    <div id="results" class="text-red-600 text-sm mt-2"></div>
-
-                    <!-- Submit Button -->
-                    <div class="flex justify-end">
-                        <button type="submit" id="analyze-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <span id="btn-text">Analyze Resume</span>
-                            <span id="spinner" class="hidden ml-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        </button>
+    
+                    <!-- Job Title -->
+                    <div>
+                        <label for="job-title" class="block text-xs font-medium text-gray-700 mb-1">Job Title</label>
+                        <input type="text" id="job-title" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-2.5 border" placeholder="Software Engineer">
                     </div>
-                </form>
+                </div>
+    
+                <!-- Job Description -->
+                <div>
+                    <label for="job-description" class="block text-xs font-medium text-gray-700 mb-1">Job Description</label>
+                    <textarea id="job-description" rows="3" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-2.5 border" placeholder="Paste job description..."></textarea>
+                </div>
+                
+                <!-- Error Display -->
+                <div id="results" class="text-xs text-red-600 mt-1"></div>
+    
+                <!-- Submit Button -->
+                <div class="flex justify-end pt-1">
+                    <button type="submit" id="analyze-btn" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500">
+                        <span id="btn-text">Analyze</span>
+                        <span id="spinner" class="hidden ml-1.5 h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    
+        <!-- Enhanced Scrollable Results Section -->
+        <div class="overflow-y-auto h-[calc(100vh-220px)] px-4 sm:px-6 lg:px-8 py-4">
+            <!-- Empty State -->
+            <div id="empty-state" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                <svg class="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <h3 class="mt-2 text-base font-medium text-gray-900">Ready to Analyze</h3>
+                <p class="mt-1 text-xs text-gray-500">Fill out the form above to begin analysis</p>
             </div>
-
-            <!-- Results Section (Initially hidden) -->
-            <div id="results-section" class="hidden">
-                <!-- Basic Analytics -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+    
+            <!-- Results Section -->
+            <div id="results-section" class="hidden space-y-6">
+                <!-- Results content remains unchanged but now has more vertical space -->
+                 <!-- Basic Analytics -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-6">Basic Resume Analysis</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -94,7 +104,7 @@ title: Analyze Resume
                             </div>
                             <p id="ats-score-description" class="text-sm text-blue-700 text-center">Better than 65% of analyzed resumes</p>
                         </div>
-
+    
                         <!-- Sectional Analysis -->
                         <div class="col-span-2">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Sectional Analysis</h3>
@@ -109,7 +119,7 @@ title: Analyze Resume
                             </div>
                         </div>
                     </div>
-
+    
                     <!-- Improvement Suggestions -->
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Improvement Suggestions</h3>
@@ -129,7 +139,7 @@ title: Analyze Resume
                         </ul>
                     </div>
                 </div>
-
+    
                 <!-- Job Matching Analytics -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-6">Job Matching Analysis</h2>
@@ -165,7 +175,7 @@ title: Analyze Resume
                             </div>
                             <p id="suitability-score-description" class="text-sm text-indigo-700 text-center">Good match for the position</p>
                         </div>
-
+    
                         <!-- Keyword Coverage -->
                         <div class="col-span-2">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Keyword Coverage</h3>
@@ -178,7 +188,7 @@ title: Analyze Resume
                             </div>
                         </div>
                     </div>
-
+    
                     <!-- Sectional Matching -->
                     <div class="mb-8">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Sectional Matching</h3>
@@ -194,7 +204,7 @@ title: Analyze Resume
                             </div>
                         </div>
                     </div>
-
+    
                     <!-- Job-Specific Suggestions -->
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Job-Specific Suggestions</h3>
@@ -214,15 +224,6 @@ title: Analyze Resume
                         </ul>
                     </div>
                 </div>
-            </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <h3 class="mt-2 text-lg font-medium text-gray-900">Ready to Analyze</h3>
-                <p class="mt-1 text-sm text-gray-500">Fill out the form above to analyze your resume against a job description.</p>
             </div>
         </div>
     </main>
