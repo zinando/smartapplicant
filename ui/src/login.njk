@@ -52,31 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnText = document.getElementById('btn-text');
     const spinner = document.getElementById('spinner');
     const formError = document.getElementById('form-error');
-    
-    // Email validation
-    // emailInput.addEventListener('blur', () => {
-    //     const errorElement = document.getElementById('email-error');
-    //     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-    //         errorElement.classList.remove('hidden');
-    //         return false;
-    //     } else {
-    //         errorElement.classList.add('hidden');
-    //         return true;
-    //     }
-    // });
 
     // Form submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Basic validation
-        // if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-        //     showError('Please enter a valid email address');
-        //     return;
-        // }
-
-        // we are not validating the email because the user can login with username or email
-        // username is just the email part before the @
 
         const formData = {
             username: emailInput.value,

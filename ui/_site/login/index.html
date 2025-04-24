@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Applicant | ATS-Optimized Resume Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include SweetAlert2 CSS & JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" href="/logo/logo-icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/fonts/inter.css">
     <link rel="stylesheet" href="/css/main.css">
@@ -140,31 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnText = document.getElementById('btn-text');
     const spinner = document.getElementById('spinner');
     const formError = document.getElementById('form-error');
-    
-    // Email validation
-    // emailInput.addEventListener('blur', () => {
-    //     const errorElement = document.getElementById('email-error');
-    //     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-    //         errorElement.classList.remove('hidden');
-    //         return false;
-    //     } else {
-    //         errorElement.classList.add('hidden');
-    //         return true;
-    //     }
-    // });
 
     // Form submission
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Basic validation
-        // if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value)) {
-        //     showError('Please enter a valid email address');
-        //     return;
-        // }
-
-        // we are not validating the email because the user can login with username or email
-        // username is just the email part before the @
 
         const formData = {
             username: emailInput.value,
@@ -252,12 +234,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-sm text-center">
+                <div>
+                    Registered Users: <span id="registered-users-count">0</span>
+                </div>
+                <div>
+                    Premium Subscribers: <span id="premium-subscribers-count">0</span>
+                </div>
+                <div>
+                    Currently Online: <span id="online-users-count">0</span>
+                </div>
                 <p>© 2025 Smart Applicant. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <script src="/js/main.js"></script>
     <script src="/js/upload.js"></script>
+    <script src="/js/poll.js"></script>
     <script src="/js/task.js"></script>
     <script src="/js/user/queryBackend.js"></script>
     <script src="/js/user/auth.js"></script>
