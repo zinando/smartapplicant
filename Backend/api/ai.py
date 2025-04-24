@@ -36,17 +36,7 @@ def get_context(user_id):
     for convo in context:
         prompt += f"I said this: {convo['User']}\nAnd you responded with this: {convo['Response']}\n\n"
     return prompt
-# text = update.message.text
-# prompt = get_context()
-# formatted_text = prompt + f'Let\'s continue from here: {text}'
-# query = gen_model.generate_content(formatted_text)
-# response = query.text
-# save_context(text, response)
-# try:
-#     await update.message.reply_text(response)
-# except Exception as e:
-#     #print(e)
-#     await update.message.reply_text(response)
+
 
 def get_improvement_suggestions(resume_text:str, user_id:int, job_description:str=''):
     """This method will route resume text and jd to ai and seek ai suggestions on how to improve the resume."""

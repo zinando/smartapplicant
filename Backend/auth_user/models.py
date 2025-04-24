@@ -110,7 +110,7 @@ class Subscription(models.Model):
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
-    subscription_type = models.ForeignKey(SubscriptionType, on_delete=models.PROTECT)
+    subscription_type = models.ForeignKey(SubscriptionType, on_delete=models.PROTECT, related_name='subscriptions')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=ACTIVE)
     start_date = models.DateField(default=timezone.now)
     expiry_date = models.DateField()

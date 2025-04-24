@@ -5,7 +5,7 @@ import io
 import re
 import mimetypes
 from .resume_parser import ResumeParser
-from .resources import job_fields, technical_keywords, soft_skills_keywords, tools_tech
+from .resources import job_fields, technical_keywords
 from fuzzywuzzy import process
 from .ai import get_improvement_suggestions, get_basic_improvement_suggestion
 
@@ -196,17 +196,26 @@ def extract_certificates(text):
 def parse_resume(text):
     """Extract structured data from a resume file (PDF or DOCX)."""
     # text = extract_text_from_file(file_obj)
+    rar = ResumeParser(text)
+    resume_analysis_results = rar.parse_all()
 
-    # print(f'education: {extract_education(text)}')
-
+    # return {
+    #     "name": extract_name(text),
+    #     "email": extract_email(text),
+    #     "phone": extract_phone(text),
+    #     "skills": extract_skills(text),
+    #     "experience": extract_experience_with_nlp(text),
+    #     "education": extract_education(text),
+    #     "certificates": extract_certificates(text)
+    # }
     return {
-        "name": extract_name(text),
-        "email": extract_email(text),
-        "phone": extract_phone(text),
-        "skills": extract_skills(text),
-        "experience": extract_experience_with_nlp(text),
-        "education": extract_education(text),
-        "certificates": extract_certificates(text)
+        "name": resume_analysis_results['metadata']['name'],
+        "email": resume_analysis_results['metadata']['email'],
+        "phone": resume_analysis_results['metadata']['phone'],
+        "skills": resume_analysis_results['skills'],
+        "experience": resume_analysis_results['experience'],
+        "education": resume_analysis_results['education'],
+        "certificates": resume_analysis_results['certifications']
     }
 
 def analyze_metadata(analysis_data:dict):
@@ -324,46 +333,6 @@ def analyze_skills(jd_analysis_data:list, resume_text:str):
 
     else:
         score = 100
-    return {'score': score, 'matched': result_data, 'missing': missing_data}
-
-def analyze_skillsxxxxx(resume_analysis_data:list, jd_analysis_data:list, basic=False):
-    """Checks relevant skills from the analysis results."""
-    jd_skills = [skill for skill in jd_analysis_data if skill]
-    resume_skills = [skill for skill in resume_analysis_data if skill]
-
-    if len(jd_skills) == 0:
-        return {'score': 100, 'matched': [], 'missing': []}
-    elif len(resume_skills) == 0:
-        return {'score': 0, 'matched': [], 'missing': jd_skills}
-
-    # Remove duplicates
-    jd_skills = list(set(jd_skills))
-    resume_skills = list(set(resume_skills))
-
-    # find skills in rsume skills data that are similar to jd skills data
-    result_data = []
-    missing_data = []
-    for jd_skill in jd_skills:
-        for resume_skill in resume_skills:
-            if get_similarity_score(resume_skill, jd_skill) > 0.8:
-                result_data.append(jd_skill)
-                break
-        else:
-            missing_data.append(jd_skill)
-    
-    # compute the score
-    result_data_count = len(result_data)
-    total_data_count = len(jd_skills)
-
-    if result_data_count == total_data_count:
-        score = 100
-    elif result_data_count > 0 and not basic:
-        score = int((result_data_count / total_data_count) * 100)
-    elif result_data_count > 0:
-        score = int((result_data_count / len(resume_analysis_data)) * 100)
-    else:
-        score = 0
-
     return {'score': score, 'matched': result_data, 'missing': missing_data}
 
 def analyze_experience(resume_analysis_data, jd_analysis_data):
@@ -554,12 +523,8 @@ def analyze_resume_with_jd(resume_text, job_description, user, job_title='',):
         field_matcher = match_job_field(job_title, technical_keywords)
         kw_data = calculate_keyword_coverage(resume_text, field_matcher['expected_keywords'])
 
-        # print(f'tech keywords: {kw_data}')
-
         # Parse resume text
         resume_data = parse_resume(resume_text)
-        #print(f'Resume {resume_analysis_results["education"]}')
-        #print(f'JD {jd_analysis_results["education"]}')
         
         sectional_analysis_data = resume_sectional_analysis(resume_analysis_results, rar.known_skills['all'])
 
