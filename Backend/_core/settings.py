@@ -106,10 +106,10 @@ WSGI_APPLICATION = '_core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smartapplicant',
-        'USER': 'postgres',
+        'NAME': 'smartapplicant_db',
+        'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),  # Use environment variable for password
-        'HOST': 'localhost',
+        'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': '5432',
     }
 }
@@ -171,6 +171,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Celery settings
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Replace with Render/Redis Cloud URL
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Replace with Render/Redis Cloud URL
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')  # Replace with Render/Redis Cloud URL
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')  # Replace with Render/Redis Cloud URL
 CELERY_TIMEZONE = 'UTC'
