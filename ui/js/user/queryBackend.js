@@ -152,4 +152,5 @@ const ApiService = (function() {
 })();
 
 // Initialize and setup cross-tab sync
-const API = ApiService.getInstance('http://127.0.0.1:8000');
+// const API = ApiService.getInstance('http://127.0.0.1:8000');
+const API = ApiService.getInstance('https://smartapplicant-backend.onrender.com');
