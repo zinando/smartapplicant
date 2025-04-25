@@ -32,7 +32,19 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 # Disable Django features that eat memory
 DEBUG = False
-LOGGING = {'...'}  # Reduce log verbosity
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}  # Reduce log verbosity
 
 ALLOWED_HOSTS = ['*']
 
