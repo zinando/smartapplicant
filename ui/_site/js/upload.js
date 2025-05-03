@@ -33,10 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('resume', file);
 
-            const response = await fetch('http://localhost:8000/api/parse/', {
-                method: 'POST',
-                body: formData
-            });
+            // const response = await fetch('http://localhost:8000/api/parse/', {
+            //     method: 'POST',
+            //     body: formData
+            // });
+
+            const response = await API.request('/api/parse/', 'POST', formData, true);
 
             const data = await response.json();
             
