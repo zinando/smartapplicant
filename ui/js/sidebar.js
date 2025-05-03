@@ -1,14 +1,11 @@
 // Sidebar toggle functionality
 document.addEventListener('DOMContentLoaded', () => {
-    // const mobileToggle = document.getElementById('sidebar-toggle');
-    // const sidebar = document.querySelector('aside');
+    // If not API.user.isAuthenticated(), redirect to login page
+    const isAuthenticated = API.user.isAuthenticated();
+    if (!isAuthenticated) {
+        window.location.href = '/login';
+    }
     
-    // if (mobileToggle && sidebar) {
-    //     mobileToggle.addEventListener('click', () => {
-    //         sidebar.classList.toggle('hidden');
-    //     });
-    // }
-
     // Sidebar toggle functionality
     const sidebar = document.querySelector('aside');
     const overlay = document.getElementById('sidebar-overlay');
