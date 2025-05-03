@@ -1,11 +1,11 @@
 // Sidebar toggle functionality
 document.addEventListener('DOMContentLoaded', () => {
     // If not API.user.isAuthenticated(), redirect to login page
-    const isAuthenticated = API.user.isAuthenticated();
+    const isAuthenticated = API.getUser().isAuthenticated;
     if (!isAuthenticated) {
         window.location.href = '/login';
     }
-    
+
     // Sidebar toggle functionality
     const sidebar = document.querySelector('aside');
     const overlay = document.getElementById('sidebar-overlay');
