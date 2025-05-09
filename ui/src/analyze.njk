@@ -286,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout( async () => {
             try {
                 const response = await analyzeResume(resumeId, jobTitle, jobDescription);
-
                 // Check if response is empty
                 if (!response || Object.keys(response).length === 0){
 
@@ -334,7 +333,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.status !== 1) throw new Error(data.message);
 
-            return data.analysis_result;
+            // return data.analysis_result;
+
+            // use task polling to check for analysis completion
+            const taskId = data.task_id;
+
+            const result = await pollTaskResult(taskId, {
+                                interval: 5000,
+                                timeout: 180000,
+                            });
+            return result;
             
         } catch (error) {
             console.error('Upload error: ', error);
