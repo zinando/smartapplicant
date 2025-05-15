@@ -1,0 +1,843 @@
+---
+layout: base.njk
+title: Create Resume
+---
+
+<div class="flex h-full">
+    <!-- Sidebar -->
+    {% include "sidebar.njk" %}
+
+    <!-- Mobile sidebar toggle -->
+    <button id="sidebar-toggle" class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <main class="relative h-full w-full lg:w-4/5">
+        <!-- Fixed Form Header -->
+        <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-900">Create New Resume</h2>
+                <div class="flex space-x-2">
+                    <button id="save-draft-btn" class="text-xs text-gray-600 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 hover:border-gray-400 transition-colors">
+                        Save Draft
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Progress Steps -->
+            <div class="mt-4">
+                <nav class="flex items-center justify-center">
+                    <ol role="list" class="flex items-center space-x-2">
+                        <li id="step-1" class="flex items-center">
+                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-medium">1</span>
+                            <span class="hidden sm:inline ml-2 text-xs font-medium text-blue-600">Personal Info</span>
+                        </li>
+                        <li id="step-2" class="flex items-center">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-500 text-xs font-medium">2</span>
+                            <span class="hidden sm:inline ml-2 text-xs font-medium text-gray-500">Education</span>
+                        </li>
+                        <li id="step-3" class="flex items-center">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-500 text-xs font-medium">3</span>
+                            <span class="hidden sm:inline ml-2 text-xs font-medium text-gray-500">Experience & Skills</span>
+                        </li>
+                        <li id="step-4" class="flex items-center">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-500 text-xs font-medium">4</span>
+                            <span class="hidden sm:inline ml-2 text-xs font-medium text-gray-500">Finalize</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Multi-Step Form Container -->
+        <div class="overflow-y-auto h-[calc(100vh-180px)] px-4 sm:px-6 lg:px-8 py-6">
+            <form id="resume-form" class="max-w-3xl mx-auto">
+                <!-- Step 1: Personal Information -->
+                <div id="step-1-content" class="space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="first-name" class="block text-xs font-medium text-gray-700 mb-1">First Name*</label>
+                                <input type="text" id="first-name" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+                            </div>
+                            <div>
+                                <label for="last-name" class="block text-xs font-medium text-gray-700 mb-1">Last Name*</label>
+                                <input type="text" id="last-name" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+                            </div>
+                            <div>
+                                <label for="other-name" class="block text-xs font-medium text-gray-700 mb-1">Other Name<span class="text-xs text-gray-500"> (optional)</span></label>
+                                <input type="text" id="other-name" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-xs font-medium text-gray-700 mb-1">Email*</label>
+                                <input type="email" id="email" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+                            </div>
+                            <div >
+                                <label for="phone" class="block text-xs font-medium text-gray-700 mb-1">Phone*</label>
+                                <input type="tel" id="phone" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+                            </div>
+                            <div>
+                                <label for="linkedin" class="block text-xs font-medium text-gray-700 mb-1">LinkedIn<span class="text-xs text-gray-500"> (optional)</span></label>
+                                <div class="mt-1 flex rounded-md shadow-sm">
+                                    <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">linkedin.com/in/</span>
+                                    <input type="text" id="linkedin" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm border">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="portfolio" class="block text-xs font-medium text-gray-700 mb-1">Portfolio<span class="text-xs text-gray-500"> (optional)</span></label>
+                                
+                                <input type="url" id="portfolio" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="https://">
+                            </div>
+                        </div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1 mt-5">Address*</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            
+                            <div >
+                                <input type="text" id="city" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="City" required>
+                            </div>
+                            <div>
+                                <input type="text" id="state" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="State" required>
+                            </div>
+                            <div>
+                                <input type="text" id="country" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Country" required>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Professional Summary</h3>
+                        <div>
+                            <label for="summary" class="block text-xs font-medium text-gray-700 mb-1">A brief description of your professional background</label>
+                            <textarea id="summary" rows="3" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" readonly>We will generate one for you based on all the information you provide...</textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button id="step-1-content-button" type="button" onclick="nextStep(2)" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Next: Education
+                            <svg class="ml-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Education -->
+                <div id="step-2-content" class="hidden space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">Education</h3>
+                            <button type="button" onclick="addEducation()" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                                Add Education
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">Please provide at least one education entry. All fields are required.</p>
+
+                        <div id="education-container" class="space-y-4">
+                            <!-- Education items will be added here -->
+                            <div class="education-item border border-gray-200 rounded-lg p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Degree*</label>
+                                        <input type="text" name="degree" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: B.Sc, B.Eng, M.Sc, OND, Associate" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Institution*</label>
+                                        <input type="text" name="institution" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Field of Study*</label>
+                                        <input type="text" name="field" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: Biochemistry, Electrical Engineering" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Graduation Year*</label>
+                                        <input type="month" name="graduation" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex justify-end">
+                                    <button type="button" onclick="removeEducation(this.closest('.education-item'))" class="text-xs text-red-600 hover:text-red-800">
+                                        Remove Education
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <button type="button" onclick="prevStep(1)" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="-ml-1 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            Previous
+                        </button>
+                        <button id="step-2-content-button" type="button" onclick="nextStep(3)" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Next: Experience & Skills
+                            <svg class="ml-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Experience, Certifications & Skills -->
+                <div id="step-3-content" class="hidden space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">Work Experience</h3>
+                            <button type="button" onclick="addExperience()" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                                Add Experience
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">If you don't have full-time job experience, provide any relevant activities: Internship, Volunteer work, Religious/Social group activity.</p>
+
+                        <div id="experience-container" class="space-y-4">
+                            <!-- Experience items will be added here -->
+                            <div class="experience-item border border-gray-200 rounded-lg p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Job Title</label>
+                                        <input type="text" name="job-title" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="E.g: Data analyst, Volunteer, Intern, Social Worker etc">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Company/Organization/Group Name</label>
+                                        <input type="text" name="company" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
+                                        <input type="month" name="start-date" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">End Date</label>
+                                        <input type="month" name="end-date" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                                        <div class="flex items-center mt-1">
+                                            <input id="current-job" name="current-job" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                            <label for="current-job" class="ml-2 block text-xs text-gray-700">I currently work here</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Responsibilities</label>
+                                    <div class="responsibilities-container space-y-2">
+                                        <div class="flex items-center">
+                                            <input type="text" name="responsibility" class="flex-1 block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: Developed and maintained web applications using React">
+                                            <button type="button" onclick="removeResponsibility(this)" class="ml-2 p-1 text-gray-400 hover:text-gray-600">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="addResponsibility(this.closest('.experience-item'))" class="mt-2 inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        <svg class="-ml-0.5 mr-1.5 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        </svg>
+                                        Add Responsibility
+                                    </button>
+                                </div>
+                                <div class="mt-3 flex justify-end">
+                                    <button type="button" onclick="removeExperience(this.closest('.experience-item'))" class="text-xs text-red-600 hover:text-red-800">
+                                        Remove Experience
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">Certifications</h3>
+                            <button type="button" onclick="addCertification()" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                                Add Certification
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">Add any relevant certifications or training programs you've completed.</p>
+
+                        <div id="certification-container" class="space-y-4">
+                            <!-- Certification items will be added here -->
+                            <div class="certification-item border border-gray-200 rounded-lg p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Certification Name</label>
+                                        <input type="text" name="cert-name" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: AWS Certified Solutions Architect">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Issuing Organization</label>
+                                        <input type="text" name="cert-org" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: Amazon Web Services">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Date Earned</label>
+                                        <input type="month" name="cert-date" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Expiration Date</label>
+                                        <input type="month" name="cert-expiry" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                                        <div class="flex items-center mt-1">
+                                            <input id="no-expiry" name="no-expiry" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                            <label for="no-expiry" class="ml-2 block text-xs text-gray-700">Does not expire</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex justify-end">
+                                    <button type="button" onclick="removeCertification(this.closest('.certification-item'))" class="text-xs text-red-600 hover:text-red-800">
+                                        Remove Certification
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Skills</h3>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Add your skills (comma separated)</label>
+                            <textarea id="skills" rows="3" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: JavaScript, Python, Project Management, UI/UX Design"></textarea>
+                            <p class="mt-1 text-xs text-gray-500">We'll automatically categorize them</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <button type="button" onclick="prevStep(2)" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="-ml-1 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            Previous
+                        </button>
+                        <button type="button" onclick="nextStep(4)" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Next: Finalize
+                            <svg class="ml-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Finalize -->
+                <div id="step-4-content" class="hidden space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Choose Template</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <input type="radio" id="template-1" name="template" value="professional" class="hidden peer" checked>
+                                <label for="template-1" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 peer-checked:border-blue-600 peer-checked:ring-1 peer-checked:ring-blue-600">
+                                    <div class="flex items-center">
+                                        <div class="w-16 h-20 bg-gray-100 border border-gray-300 mr-4"></div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">Professional</h4>
+                                            <p class="text-xs text-gray-500 mt-1">Clean, ATS-friendly layout</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="template-2" name="template" value="modern" class="hidden peer">
+                                <label for="template-2" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 peer-checked:border-blue-600 peer-checked:ring-1 peer-checked:ring-blue-600">
+                                    <div class="flex items-center">
+                                        <div class="w-16 h-20 bg-gray-100 border border-gray-300 mr-4"></div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">Modern</h4>
+                                            <p class="text-xs text-gray-500 mt-1">Creative with side columns</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Preview & Generate</h3>
+                        <div id="preview-container" class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <div class="flex items-center justify-center py-8">
+                                <div class="text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <h3 class="mt-2 text-sm font-medium text-gray-900">Resume Preview</h3>
+                                    <p class="mt-1 text-xs text-gray-500">Your generated resume will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <button type="button" onclick="prevStep(3)" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="-ml-1 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            Previous
+                        </button>
+                        <button type="button" id="generate-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <span id="generate-btn-text">Generate Resume</span>
+                            <span id="generate-spinner" class="hidden ml-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+{% block extra_js %}
+<script>
+let currentStep = 1;
+const formData = {};
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize form steps
+    updateStepIndicator();
+
+    // Form submission
+    const resumeForm = document.getElementById('resume-form');
+    const generateBtn = document.getElementById('generate-btn');
+    const generateBtnText = document.getElementById('generate-btn-text');
+    const generateSpinner = document.getElementById('generate-spinner');
+
+    generateBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        toggleGenerateButton(true);
+
+        try {
+            // Submit formData to backend
+            const response = await submitResumeData(formData);
+
+            if (response.task_id) {
+                // Poll for task completion
+                const file_path = await pollTaskResult(response.task_id, {
+                    interval: 2000,
+                    timeout: 30000
+                });
+
+                // if (result.status === 'SUCCESS') {
+                //     // Download the generated resume
+                downloadResume(file_path);
+                // } else {
+                //     throw new Error('Resume generation failed');
+                // }
+            } else {
+                throw new Error('Invalid response from server');
+            }
+        } catch (error) {
+            console.error('Error generating resume:', error);
+            showToast(`Error: ${error.message}`, 'error');
+        } finally {
+            toggleGenerateButton(false);
+        }
+    });
+
+    // Helper functions
+    function toggleGenerateButton(loading) {
+        if (loading) {
+            generateBtn.disabled = true;
+            generateBtnText.textContent = 'Generating...';
+            generateSpinner.classList.remove('hidden');
+        } else {
+            generateBtn.disabled = false;
+            generateBtnText.textContent = 'Generate Resume';
+            generateSpinner.classList.add('hidden');
+        }
+    }
+
+    // Step 1 fields validation
+    setButtonState('step-1-content-button', true, 'bg-blue-600');
+    const step1Fields = ['first-name', 'last-name', 'email', 'phone', 'city', 'state', 'country'];
+    step1Fields.forEach(field => {
+        document.getElementById(field).addEventListener('input', () => {
+            const allFilled = step1Fields.every(id => {
+                const value = document.getElementById(id).value.trim();
+                return value !== '';
+            });
+            setButtonState('step-1-content-button', !allFilled, 'bg-blue-600');
+        });
+    });
+
+    // Step 2 fields validation (education)
+    setButtonState('step-2-content-button', true, 'bg-blue-600');
+    document.getElementById('education-container').addEventListener('input', (e) => {
+        if (e.target.matches('input[name="degree"], input[name="institution"], input[name="field"], input[name="graduation"]')) {
+            validateEducationStep();
+        }
+    });
+
+    function validateEducationStep() {
+        const educationItems = document.querySelectorAll('.education-item');
+        let allValid = educationItems.length > 0;
+        
+        educationItems.forEach(item => {
+            const inputs = item.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allValid = false;
+                }
+            });
+        });
+        
+        setButtonState('step-2-content-button', !allValid, 'bg-blue-600');
+    }
+
+    async function submitResumeData(data) {
+        // Replace with your actual API endpoint
+        const response = await API.request('/api/user/resumes/generate/', 'POST', data);
+
+        if (!response.ok) {
+            throw new Error('Failed to submit resume data');
+        }
+        const result = await response.json();
+        if (result.status !== 1) {
+            throw new Error(result.message);
+        }
+
+        return result;
+    }
+
+    async function downloadResume(filename) {
+        await API.request(`/api/download/${filename}/`)
+            .then(res => res.blob())
+            .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            });
+    }
+
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+});
+
+function prepareFormData() {
+    // Collect all form data
+    formData.personal_info = {
+        first_name: document.getElementById('first-name').value,
+        last_name: document.getElementById('last-name').value,
+        other_name: document.getElementById('other-name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        linkedin: document.getElementById('linkedin').value,
+        portfolio: document.getElementById('portfolio').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        country: document.getElementById('country').value,
+        summary: document.getElementById('summary').value
+    };
+    
+    // Collect education
+    formData.education = Array.from(document.querySelectorAll('.education-item')).map(item => {
+        return {
+            degree: item.querySelector('[name="degree"]').value,
+            institution: item.querySelector('[name="institution"]').value,
+            field: item.querySelector('[name="field"]').value,
+            graduation: item.querySelector('[name="graduation"]').value
+        };
+    });
+
+    // Collect experiences
+    formData.experiences = Array.from(document.querySelectorAll('.experience-item')).map(item => {
+        return {
+            job_title: item.querySelector('[name="job-title"]').value,
+            company: item.querySelector('[name="company"]').value,
+            start_date: item.querySelector('[name="start-date"]').value,
+            end_date: item.querySelector('[name="end-date"]').value,
+            current: item.querySelector('[name="current-job"]')?.checked || false,
+            responsibilities: Array.from(item.querySelectorAll('[name="responsibility"]')).map(r => r.value)
+        };
+    });
+
+    // Collect certifications
+    formData.certifications = Array.from(document.querySelectorAll('.certification-item')).map(item => {
+        return {
+            name: item.querySelector('[name="cert-name"]').value,
+            organization: item.querySelector('[name="cert-org"]').value,
+            date_earned: item.querySelector('[name="cert-date"]').value,
+            expiry_date: item.querySelector('[name="cert-expiry"]').value,
+            no_expiry: item.querySelector('[name="no-expiry"]')?.checked || false
+        };
+    });
+
+    // Collect skills
+    formData.skills = document.getElementById('skills').value.split(',').map(skill => skill.trim()).filter(skill => skill);
+    formData.template = document.querySelector('input[name="template"]:checked').value;
+
+    const resumePreview = new ResumePreview('preview-container');
+    resumePreview.updateSection('personalInfo', formData.personal_info);
+    resumePreview.updateSection('education', formData.education);
+    resumePreview.updateSection('experiences', formData.experiences);
+    resumePreview.updateSection('certifications', formData.certifications);
+    resumePreview.updateSection('skills', formData.skills);
+
+    return formData;
+}
+
+// Step navigation
+function nextStep(step) {
+    // Validate current step before proceeding
+    if (step === 2 && !validateStep1()) return;
+    if (step === 3 && !validateStep2()) return;
+    
+    // Prepare form data if needed
+    if (step === 4) {
+        prepareFormData();
+    }
+    
+    document.getElementById(`step-${currentStep}-content`).classList.add('hidden');
+    document.getElementById(`step-${step}-content`).classList.remove('hidden');
+    currentStep = step;
+    updateStepIndicator();
+}
+
+function prevStep(step) {
+    document.getElementById(`step-${currentStep}-content`).classList.add('hidden');
+    document.getElementById(`step-${step}-content`).classList.remove('hidden');
+    currentStep = step;
+    updateStepIndicator();
+}
+
+function validateStep1() {
+    const requiredFields = ['first-name', 'last-name', 'email', 'phone'];
+    const isValid = requiredFields.every(id => {
+        const value = document.getElementById(id).value.trim();
+        return value !== '';
+    });
+    
+    if (!isValid) {
+        showToast('Please fill all required fields', 'error');
+        return false;
+    }
+    return true;
+}
+
+function validateStep2() {
+    const educationItems = document.querySelectorAll('.education-item');
+    if (educationItems.length === 0) {
+        showToast('Please add at least one education entry', 'error');
+        return false;
+    }
+    
+    for (const item of educationItems) {
+        const inputs = item.querySelectorAll('input[required]');
+        for (const input of inputs) {
+            if (!input.value.trim()) {
+                showToast('Please fill all required education fields', 'error');
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function updateStepIndicator() {
+    // Reset all steps
+    for (let i = 1; i <= 4; i++) {
+        const stepEl = document.getElementById(`step-${i}`);
+        const numberSpan = stepEl.querySelector('span:first-of-type');
+        const textSpan = stepEl.querySelector('span:last-of-type');
+        
+        // Reset number circle
+        numberSpan.classList.remove('bg-blue-600', 'text-white');
+        numberSpan.classList.add('bg-gray-100', 'text-gray-500');
+        
+        // Reset text
+        textSpan.classList.remove('text-blue-600');
+        textSpan.classList.add('text-gray-500');
+    }
+
+    // Highlight current step
+    const currentStepEl = document.getElementById(`step-${currentStep}`);
+    const currentNumberSpan = currentStepEl.querySelector('span:first-of-type');
+    const currentTextSpan = currentStepEl.querySelector('span:last-of-type');
+    
+    currentNumberSpan.classList.remove('bg-gray-100', 'text-gray-500');
+    currentNumberSpan.classList.add('bg-blue-600', 'text-white');
+    
+    currentTextSpan.classList.remove('text-gray-500');
+    currentTextSpan.classList.add('text-blue-600');
+}
+
+// Dynamic form elements
+function addExperience() {
+    const container = document.getElementById('experience-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'experience-item border border-gray-200 rounded-lg p-4';
+    newItem.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Job Title</label>
+                <input type="text" name="job-title" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="E.g: Data analyst, Volunteer, Intern, Social Worker etc">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Company/Organization/Group Name</label>
+                <input type="text" name="company" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
+                <input type="month" name="start-date" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">End Date</label>
+                <input type="month" name="end-date" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                <div class="flex items-center mt-1">
+                    <input type="checkbox" name="current-job" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label class="ml-2 block text-xs text-gray-700">I currently work here</label>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Responsibilities</label>
+            <div class="responsibilities-container space-y-2">
+                <div class="flex items-center">
+                    <input type="text" name="responsibility" class="flex-1 block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: Developed and maintained web applications using React">
+                    <button type="button" onclick="removeResponsibility(this)" class="ml-2 p-1 text-gray-400 hover:text-gray-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button type="button" onclick="addResponsibility(this.closest('.experience-item'))" class="mt-2 inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg class="-ml-0.5 mr-1.5 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                Add Responsibility
+            </button>
+        </div>
+        <div class="mt-3 flex justify-end">
+            <button type="button" onclick="removeExperience(this.closest('.experience-item'))" class="text-xs text-red-600 hover:text-red-800">
+                Remove Experience
+            </button>
+        </div>
+    `;
+    container.appendChild(newItem);
+}
+
+function removeExperience(item) {
+    item.remove();
+}
+
+function addResponsibility(experienceItem) {
+    const container = experienceItem.querySelector('.responsibilities-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'flex items-center';
+    newItem.innerHTML = `
+        <input type="text" name="responsibility" class="flex-1 block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: Developed and maintained web applications using React">
+        <button type="button" onclick="removeResponsibility(this)" class="ml-2 p-1 text-gray-400 hover:text-gray-600">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+        </button>
+    `;
+    container.appendChild(newItem);
+}
+
+function removeResponsibility(button) {
+    button.closest('div').remove();
+}
+
+function addEducation() {
+    const container = document.getElementById('education-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'education-item border border-gray-200 rounded-lg p-4';
+    newItem.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Degree*</label>
+                <input type="text" name="degree" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: B.Sc, B.Eng, M.Sc, OND, Associate" required>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Institution*</label>
+                <input type="text" name="institution" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Field of Study*</label>
+                <input type="text" name="field" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: Biochemistry, Electrical Engineering" required>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Graduation Year*</label>
+                <input type="month" name="graduation" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" required>
+            </div>
+        </div>
+        <div class="mt-3 flex justify-end">
+            <button type="button" onclick="removeEducation(this.closest('.education-item'))" class="text-xs text-red-600 hover:text-red-800">
+                Remove Education
+            </button>
+        </div>
+    `;
+    container.appendChild(newItem);
+    // Add event listeners for validation
+    newItem.querySelectorAll('input[required]').forEach(input => {
+        input.addEventListener('input', validateEducationStep);
+    });
+}
+
+function removeEducation(item) {
+    item.remove();
+    validateEducationStep();
+}
+
+function addCertification() {
+    const container = document.getElementById('certification-container');
+    const newItem = document.createElement('div');
+    newItem.className = 'certification-item border border-gray-200 rounded-lg p-4';
+    newItem.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Certification Name</label>
+                <input type="text" name="cert-name" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: AWS Certified Solutions Architect">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Issuing Organization</label>
+                <input type="text" name="cert-org" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g: Amazon Web Services">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Date Earned</label>
+                <input type="month" name="cert-date" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Expiration Date</label>
+                <input type="month" name="cert-expiry" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border">
+                <div class="flex items-center mt-1">
+                    <input type="checkbox" name="no-expiry" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label class="ml-2 block text-xs text-gray-700">Does not expire</label>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 flex justify-end">
+            <button type="button" onclick="removeCertification(this.closest('.certification-item'))" class="text-xs text-red-600 hover:text-red-800">
+                Remove Certification
+            </button>
+        </div>
+    `;
+    container.appendChild(newItem);
+}
+
+function removeCertification(item) {
+    item.remove();
+}
+
+
+</script>
+{% endblock %}
