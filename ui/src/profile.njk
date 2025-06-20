@@ -80,6 +80,11 @@ user:
                             <label class="block text-sm font-medium text-gray-500">Phone Number</label>
                             <p id="phone" class="mt-1 text-sm text-gray-900"></p>
                         </div>
+                        <!-- for resume credits -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Resume Credits</label>
+                            <p id="resume-credits" class="mt-1 text-sm text-gray-900">null</p>
+                        </div>
                     </div>
                 </div>
 
@@ -124,13 +129,13 @@ user:
             <!-- Action Buttons -->
             <div class="space-y-4">
                 <div id="basic-action-btns">
-                    <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    <a href="/premium" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clip-rule="evenodd"/>
                             <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z"/>
                         </svg>
                         Upgrade to Premium
-                    </button>
+                    </a>
                 </div>
                 <div id="pro-action-btns" class="hidden">
                     <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -272,6 +277,7 @@ user:
         document.getElementById('email').textContent = user.email;
         document.getElementById('phone').textContent = user.phone_number;
         document.getElementById('username').textContent = user.username;
+        document.getElementById('resume-credits').textContent = user.resume_credits;
 
         // set account type title
         if (user.account_type == 'premium'){

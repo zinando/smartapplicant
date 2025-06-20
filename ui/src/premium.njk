@@ -1,0 +1,333 @@
+---
+layout: base.njk
+title: Premium Resume Services
+---
+
+<div class="flex h-full">
+    <!-- Sidebar -->
+    {% include "sidebar.njk" %}
+
+    <!-- Mobile sidebar toggle -->
+    <button id="sidebar-toggle" class="md:hidden fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- Main content -->
+    <main class="flex-1 overflow-auto bg-gradient-to-b from-blue-50 to-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Hero Section -->
+            <div class="text-center mb-16">
+                <div class="mx-auto h-24 w-24 text-blue-600 mb-6">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Professional Resume Tailoring</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Get job-winning resumes tailored specifically for each position you apply to. Choose the option that works best for you:
+                </p>
+            </div>
+
+            <!-- Pricing Cards -->
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
+                <!-- Pay-Per-Use Card -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-blue-100 transform hover:scale-[1.02] transition-all duration-300">
+                    <div class="bg-blue-600 px-6 py-4">
+                        <h2 class="text-2xl font-bold text-white">Pay-Per-Use</h2>
+                        <p class="text-blue-100">Perfect for occasional applicants</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-end mb-6">
+                            <span class="text-5xl font-bold text-gray-900">$1</span>
+                            <span class="text-lg text-gray-500 ml-2">/ resume credit<br>or ₦1,500</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Instant AI-powered resume tailoring</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Optimized for Applicant Tracking Systems</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Professional formatting & layout</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Download in PDF/DOCX format</span>
+                            </li>
+                        </ul>
+                        <button type="button" id="resume-credit-btn" class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                            <span id="btn-text-1">Buy Credits Now</span>
+                        </button>
+                        <p class="text-center text-sm text-gray-500 mt-3">Only pay for what you use</p>
+                    </div>
+                </div>
+
+                <!-- Premium Subscription Card -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-blue-600 transform hover:scale-[1.02] transition-all duration-300 relative">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 transform translate-x-2 -translate-y-2 rotate-6">
+                        MOST POPULAR
+                    </div>
+                    <div class="bg-blue-800 px-6 py-4">
+                        <h2 class="text-2xl font-bold text-white">Premium Subscription</h2>
+                        <p class="text-blue-200">Best for active job seekers</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-end mb-6">
+                            <span class="text-5xl font-bold text-gray-900">$13</span>
+                            <span class="text-lg text-gray-500 ml-2">/ month<br>or ₦17,500</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span><strong>Unlimited</strong> resume generations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Priority processing</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Advanced customization options</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Multiple template designs</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Access to new premium features at 0 extra cost</span>
+                            </li>
+                        </ul>
+                        <button type="button" id="resume-premium-btn" class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                            <span id="btn-text-2">Subscribe Now</span>
+                        </button>
+                        <p class="text-center text-sm text-gray-500 mt-3">Apply for more jobs with less effort</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial Section -->
+            <div class="max-w-3xl mx-auto mt-20 bg-white rounded-xl shadow-md overflow-hidden p-6 border border-gray-200">
+                <div class="flex items-center">
+                    <img class="h-16 w-16 rounded-full object-cover" src="/images/testimonial.jpg" alt="Happy customer">
+                    <div class="ml-4">
+                        <p class="text-gray-600 italic">"I landed 3 interviews in my first week using these tailored resumes. The premium subscription paid for itself after my first job offer!"</p>
+                        <p class="font-medium text-gray-900 mt-2">- Tunde Adebayo, Lagos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="max-w-3xl mx-auto mt-16">
+                <h3 class="text-2xl font-bold text-center text-gray-900 mb-8">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="border-b border-gray-200 pb-4">
+                        <button class="flex justify-between items-center w-full text-left font-medium text-gray-700">
+                            <span>How does the resume tailoring work?</span>
+                            <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <p class="mt-2 text-gray-600 hidden">Our AI analyzes the job description and your existing resume to create a perfectly tailored version that highlights the most relevant skills and experiences for each position.</p>
+                    </div>
+                    <div class="border-b border-gray-200 pb-4">
+                        <button class="flex justify-between items-center w-full text-left font-medium text-gray-700">
+                            <span>Can I cancel my subscription anytime?</span>
+                            <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <p class="mt-2 text-gray-600 hidden">Yes, you can cancel your premium subscription at any time and you'll retain access until the end of your billing period.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let numberOfResumeCredits = 0;
+    let subscriptionType = null; // one_month_subscription, three_months_subscription, six_months_subscription, one_year_subscription
+document.addEventListener('DOMContentLoaded', () => {
+    // FAQ toggle functionality
+    document.querySelectorAll('.border-b button').forEach(button => {
+        button.addEventListener('click', () => {
+            const answer = button.nextElementSibling;
+            answer.classList.toggle('hidden');
+            
+            const icon = button.querySelector('svg');
+            icon.classList.toggle('rotate-180');
+        });
+    });
+
+    // id selectors
+    const resumeCreditBtn = document.getElementById('resume-credit-btn');
+    const resumePremiumBtn = document.getElementById('resume-premium-btn');
+    const user = API.getUser();
+
+    // Resume credit button click event
+    resumeCreditBtn.addEventListener('click', async () => {
+        if (isPremiumUser()){
+            showToast('You are a premium user. You have unlimited downloads!', 'error');
+            return;
+        }
+
+        toggleButtonSpinner('resume-credit-btn', 'Buy Credits Now', isLoading=true); // show spinner
+        // Get the number of resume credits from user
+        await getNumberOfResumeCredits();
+        if (numberOfResumeCredits > 0) {
+            data = {
+                order_type: 'resume_credits',
+                credits: numberOfResumeCredits,
+                currency: 'NGN' // or 'USD' based on user preference
+            };
+            try {
+                const response = await API.request('/api/auth/premium-service/order/', 'POST', data);
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit resume data');
+                }
+                const result = await response.json();
+                if (result.status !== 1) {
+                    throw new Error(result.message);
+                }
+
+                // Call the payment API
+                toggleButtonSpinner('resume-credit-btn', 'Buy Credits Now', isLoading=false); // hide spinner
+                await triggerPayment(result.order, type='resume_credits');
+            } catch (error) {
+                console.error('Error submitting resume data: ', error.message);
+                showToast(error.message, 'error');
+                toggleButtonSpinner('resume-credit-btn', 'Buy Credits Now', isLoading=false); // hide spinner
+                return;
+            }
+        }
+    });
+
+    // Resume Premium button click event
+    resumePremiumBtn.addEventListener('click', () => {
+        if (isPremiumUser()){
+            showToast('You still have active subscription.', 'error');
+            return;
+        }
+        toggleButtonSpinner('resume-premium-btn', 'Subscribe Now', isLoading=true); // show spinner
+
+        // Get the subscription type from user
+        getSubscriptionType().then(async () => {
+            if (subscriptionType) {
+                data = {
+                    order_type: subscriptionType,
+                    currency: 'NGN', // or 'USD' based on user preference
+                };
+                try {
+                    const response = await API.request('/api/auth/premium-service/order/', 'POST', data);
+
+                    if (!response.ok) {
+                        throw new Error('Failed to submit subscription data');
+                    }
+                    const result = await response.json();
+                    if (result.status !== 1) {
+                        throw new Error(result.message);
+                    }
+
+                    // Call the payment API
+                    toggleButtonSpinner('resume-premium-btn', 'Subscribe Now', isLoading=false); // hide spinner
+                    await triggerPayment(result.order, type=subscriptionType);
+                } catch (error) {
+                    console.error('Error submitting subscription data: ', error.message);
+                    showToast(error.message, 'error');
+                    toggleButtonSpinner('resume-premium-btn', 'Subscribe Now', isLoading=false); // hide spinner
+                }
+            } else {
+                toggleButtonSpinner('resume-premium-btn', 'Subscribe Now', isLoading=false); // hide spinner
+            }
+        });
+    });
+});
+
+// A function for accepting number of resume units from user using sweetalert
+async function getNumberOfResumeCredits() {
+    const { value: itemCount } = await Swal.fire({
+        title: 'Enter Number of Resume Credits You Wish To Purchase',
+        input: 'number',
+        inputLabel: 'Number of Credit Units',
+        inputPlaceholder: 'Enter a number',
+        inputAttributes: {
+            min: 1,
+            step: 1
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        inputValidator: (value) => {
+            if (!value || isNaN(value) || value <= 0) {
+                return 'Please enter a valid number greater than 0';
+            }
+        }
+    });
+
+    if (itemCount) {
+        // Update the number of resume credits
+        numberOfResumeCredits = parseInt(itemCount, 10);
+    } else {
+        showToast('You cancelled the operation', 'error');
+        // reset the button text
+        toggleButtonSpinner('resume-credit-btn', 'Buy Credits Now', isLoading=false); // hide spinner
+    }
+}
+
+// Function to get the subscrition type from user
+async function getSubscriptionType() {
+    const { value: subscription } = await Swal.fire({
+        title: 'Select Subscription Type',
+        input: 'select',
+        inputOptions: {
+            one_month_subscription: '1 Month Subscription | ₦17,500/ $13',
+            three_months_subscription: '3 Months Subscription | ₦45,000/ $33',
+            six_months_subscription: '6 Months Subscription | ₦80,000/ $60',
+            one_year_subscription: '1 Year Subscription | ₦150,000/ $110'
+        },
+        inputPlaceholder: 'Select a subscription type',
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Please select a subscription type';
+            }
+        }
+    });
+
+    if (subscription) {
+        // Update the subscription type
+        subscriptionType = subscription;
+        console.log(`You selected: ${subscription}`);
+    } else {
+        showToast('You cancelled the operation', 'error');
+    }
+}
+
+
+</script>

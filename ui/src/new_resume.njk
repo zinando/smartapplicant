@@ -496,7 +496,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function submitResumeData(data) {
-        // Replace with your actual API endpoint
         const response = await API.request('/api/user/resumes/generate/', 'POST', data);
 
         if (!response.ok) {
@@ -508,21 +507,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return result;
-    }
-
-    async function downloadResume(filename) {
-        await API.request(`/api/download/${filename}/`)
-            .then(res => res.blob())
-            .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-            });
     }
 
     function getCSRFToken() {

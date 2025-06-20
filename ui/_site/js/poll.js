@@ -109,4 +109,4 @@ async function pollTaskResult(taskId, options = {}) {
         // Start polling
         await poll();
     });
-}
+} 

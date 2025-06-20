@@ -4,7 +4,7 @@
  * @param {string} type - 'success' or 'error'
  * @param {number} [duration=3000] - Duration in milliseconds (default: 3000)
  */
-function showToast(message, type = 'success', duration = 3000) {
+function showToast(message, type = 'success', duration = 4000) {
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -201,4 +201,154 @@ class ResumePreview {
       </section>
     `;
   }
+}
+
+// API utility for downloading resume files from the server
+async function downloadResume(filename) {
+        await API.request(`/api/download/${filename}/`)
+            .then(res => res.blob())
+            .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            });
+    }
+
+// check if user is a premium user
+function isPremiumUser() {
+    const user = API.getUser();
+    if (user.account_type == 'premium') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// check if user has resume credits
+function hasResumeCredits() {
+    const user = API.getUser();
+    if (user.resume_credits > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// general function for toggling button spinners
+function toggleButtonSpinner(btnId, btnText, isLoading=true, loadingText='Loading...') {
+    // create the necessary elements and toggle their visibility
+    const button = document.getElementById(btnId);
+    if (!button) {
+        console.error(`Button with ID "${btnId}" not found`);
+        return;
+    }
+
+    if (isLoading) {
+        // Show spinner and hide text
+        button.innerHTML = `<span id="btn-text">${loadingText}</span><span id="btn-spinner" class="ml-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>`;
+        button.disabled = true;
+        button.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        // Hide spinner and show text
+        const spinner = button.querySelector('#btn-spinner');
+        if (spinner) {
+            spinner.remove();
+        }
+        const btnTextElement = button.querySelector('#btn-text');
+        if (btnTextElement) {
+            btnTextElement.textContent = btnText;
+        } else {
+            button.innerHTML = `<span id="btn-text">${btnText}</span>`;
+        }
+        button.disabled = false;
+        button.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+}
+
+// async function to prompt user to get premium
+async function showPremiumRequiredModal(text = 'Get access to unlimited resume downloads and premium features.') {
+    const { value: confirmed } = await Swal.fire({
+        title: 'Upgrade to Premium', 
+        text: text,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Get Premium Now',
+        cancelButtonText: 'Maybe Later'
+    });
+
+    if (confirmed) {
+        window.location.href = '/premium';
+    }
+}
+
+// Function to export data to Excel using XLSX.js
+function exportAnalyticsDataToExcel(data) {
+    // Create a workbook with multiple sheets for different sections
+    const workbook = XLSX.utils.book_new();
+    
+    // 1. Main Summary Sheet
+    const summaryData = [
+        ["Metric", "Value"],
+        ["Total Revenue", `${data.currency.symbol}${data.total_revenue}`],
+        ["Active Users", data.active_users],
+        ["New Customers", data.customer_acquisition.new_customers],
+        ["Customer Acquisition Cost", `${data.currency.symbol}${data.customer_acquisition.cac}`]
+    ];
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
+    
+    // 2. Revenue Breakdown Sheet
+    const revenueData = [
+        ["Revenue Type", "Amount", "Percentage"],
+        ["Total Revenue", `${data.currency.symbol}${data.total_revenue}`, "100%"],
+        ["Credit Purchases", `${data.currency.symbol}${data.credit_purchases.total_revenue}`, `${(data.credit_purchases.total_revenue/data.total_revenue*100).toFixed(2)}%`],
+        ["Subscriptions", `${data.currency.symbol}${data.subscriptions.total_revenue}`, `${(data.subscriptions.total_revenue/data.total_revenue*100).toFixed(2)}%`],
+        [],
+        ["Subscription Plan", "Revenue", "Percentage"],
+        ["One Month", `${data.currency.symbol}${data.subscriptions.by_plan.one_month_subscription.revenue}`, `${data.subscriptions.by_plan.one_month_subscription.percentage.toFixed(2)}%`],
+        ["Resum Credit", `${data.currency.symbol}${data.subscriptions.by_plan.resum_credit.revenue}`, `${data.subscriptions.by_plan.resum_credit.percentage.toFixed(2)}%`]
+    ];
+    const revenueSheet = XLSX.utils.aoa_to_sheet(revenueData);
+    XLSX.utils.book_append_sheet(workbook, revenueSheet, "Revenue Breakdown");
+    
+    // 3. Recent Orders Sheet
+    const ordersHeader = ["Order #", "Date", "Type", "Amount", "Payment Method", "Status", "Customer", "Email", "Plan"];
+    const ordersData = data.recent_orders.map(order => [
+        order.order_number,
+        new Date(order.created_at).toLocaleString(),
+        order.order_type,
+        `${data.currency.symbol}${order.total}`,
+        order.payment_method,
+        order.payment_status,
+        `${order.user__first_name} ${order.user__last_name}`,
+        order.user__email,
+        order.subscription__subscription_type__name || "N/A"
+    ]);
+    ordersData.unshift(ordersHeader);
+    const ordersSheet = XLSX.utils.aoa_to_sheet(ordersData);
+    XLSX.utils.book_append_sheet(workbook, ordersSheet, "Recent Orders");
+    
+    // 4. Plan Performance Sheet
+    const planHeader = ["Plan", "Subscribers", "MRR", "Avg Lifetime", "Churn Rate", "Conversion Rate", "Renewal Rate"];
+    const planData = data.plan_performance.map(plan => [
+        plan.plan,
+        plan.subscribers,
+        `${data.currency.symbol}${plan.mrr}`,
+        plan.avg_lifetime,
+        `${plan.churn_rate}%`,
+        `${plan.conversion_rate}%`,
+        `${plan.renewal_rate}%`
+    ]);
+    planData.unshift(planHeader);
+    const planSheet = XLSX.utils.aoa_to_sheet(planData);
+    XLSX.utils.book_append_sheet(workbook, planSheet, "Plan Performance");
+    
+    // Generate and download the Excel file
+    const fileName = `Revenue_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
 }

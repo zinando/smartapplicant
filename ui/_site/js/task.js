@@ -20,7 +20,7 @@ async function pollTaskResults(taskId) {
     }
     
     showError('Processing timed out');
-}
+} 
 
 
 function renderFinalResults(data) {
@@ -159,11 +159,11 @@ function formatSectionContent(section, content) {
 function generateRecommendations(data) {
     const recommendations = [];
     
-    if (!data.experience) {
+    if (!data.experience || data.experience.length === 0) {
         recommendations.push("Add a clearly marked 'Experience' section with job titles and durations");
     }
     
-    if (!data.education) {
+    if (!data.education || data.education.length === 0) {
         recommendations.push("Include your educational background with institution names and dates");
     }
     
@@ -171,12 +171,15 @@ function generateRecommendations(data) {
         recommendations.push("List at least 5-8 relevant skills in a dedicated 'Skills' section");
     }
     
-    if (!data.certificates) {
+    if (!data.certificates || data.certificates.length === 0) {
         recommendations.push("Highlight any professional certifications you've earned");
     }
     
     if (!data.email || !data.phone) {
-        recommendations.push("Ensure your contact information (email & phone) is clearly visible");
+        recommendations.push("Ensure your contact information (email & phone) is clearly stated, and correctly formatted. Use a professional email address. For best practices, use a phone number with country code: +1-234-567-8901");
+    }
+    if (!data.name) {
+        recommendations.push("Name should appear at the top of your resume, specifically on the first line. Namse should be in upper case or title case, e.g. 'John Doe' or 'JOHN DOE'.");
     }
     
     return recommendations.map(rec => `<li>${rec}</li>`).join('');
