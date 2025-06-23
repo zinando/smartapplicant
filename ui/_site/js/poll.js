@@ -36,8 +36,8 @@ async function pollStats() {
     }
 }
 
-// Start polling when the page loads
-document.addEventListener('DOMContentLoaded', pollStats);
+// // Start polling when the page loads
+// document.addEventListener('DOMContentLoaded', pollStats);
 
 /**
  * Polls a Celery task endpoint until completion

@@ -113,7 +113,7 @@ title: Revenue Analytics Dashboard
                 </div>
 
                 <!-- Active Users -->
-                <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500" id="active-users-card">
+                <!-- <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500" id="active-users-card">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Active Users</p>
@@ -127,6 +127,33 @@ title: Revenue Analytics Dashboard
                     </div>
                     <p class="mt-2 text-sm text-green-600 font-medium growth-indicator">
                         <span>↑ 5.3%</span>
+                        <span class="text-gray-500 ml-1">vs last period</span>
+                    </p>
+                </div> -->
+                <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500" id="active-users-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">User Analytics</p>
+                            <div class="flex items-end space-x-4">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Active</p>
+                                    <p class="text-2xl font-semibold text-gray-900 metric-value">1,842</p>
+                                </div>
+                                <div class="border-l border-gray-200 h-10"></div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500">Total</p>
+                                    <p class="text-2xl font-semibold text-gray-900 total-users-value">4,573</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-green-600 font-medium growth-indicator">
+                        <span>↑ 5.3% active</span>
                         <span class="text-gray-500 ml-1">vs last period</span>
                     </p>
                 </div>
@@ -569,7 +596,7 @@ function populateDashboard(data) {
     updateMetricCard('#total-revenue-card', data.total_revenue, data.growth_rates.total_revenue);
     updateMetricCard('#credit-purchases-card', data.credit_purchases.total_revenue, data.growth_rates.credit_purchases);
     updateMetricCard('#subscriptions-card', data.subscriptions.total_revenue, data.growth_rates.subscriptions);
-    updateMetricCard('#active-users-card', data.active_users, data.growth_rates.active_users);
+    updateMetricCard('#active-users-card', data.active_users, data.growth_rates.active_users, data.total_users);
     
     // Update revenue by plan chart
     updateRevenueByPlanChart(data.subscriptions.by_plan);
@@ -590,15 +617,20 @@ function populateDashboard(data) {
     updatePlanPerformanceTable(data.plan_performance);
 }
 
-function updateMetricCard(selector, value, growthRate) {
+function updateMetricCard(selector, value, growthRate, totalUsers = null) {
     const card = document.querySelector(selector);
     if (!card) return;
     
     // Update value
     const valueEl = card.querySelector('.metric-value');
+    const totalUsersEl = card.querySelector('.total-users-value');
     if (valueEl) {
         // valueEl.textContent = typeof value === 'number' ? `${currency.symbol}${value.toLocaleString()}` : value;
         valueEl.textContent = selector !== '#active-users-card' ? `${currency.symbol}${value.toLocaleString()}` : value;
+    }
+
+    if (totalUsersEl) {
+        totalUsersEl.textContent = totalUsers ? totalUsers.toLocaleString() : '';
     }
     
     // Update growth indicator
@@ -855,7 +887,7 @@ function updatePaymentMethodDistribution(methods) {
 }
 
 // Customer Acquisition Chart Implementation
-function updateCustomerAcquisitionChart(data) {
+function updateCustomerAcquisitionChartxxx(data) {
     const ctx = document.getElementById('customerAcquisitionChart');
     if (!ctx) return;
     
@@ -923,6 +955,132 @@ function updateCustomerAcquisitionChart(data) {
                 x: {
                     grid: {
                         display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateCustomerAcquisitionChart(data) {
+    const ctx = document.getElementById('customerAcquisitionChart');
+    if (!ctx) return;
+    
+    // Update the metrics
+    document.getElementById('newCustomersValue').textContent = data.new_customers;
+    document.getElementById('avgCacValue').textContent = 
+        `${currency.symbol}${data.cac.toFixed(2)}`;
+
+    // Destroy previous chart if exists
+    if (ctx.chart) {
+        ctx.chart.destroy();
+    }
+
+    // Default channel colors if not provided
+    const defaultColors = [
+        'rgba(59, 130, 246, 0.7)',   // blue
+        'rgba(16, 185, 129, 0.7)',   // green
+        'rgba(139, 92, 246, 0.7)',    // purple
+        'rgba(236, 72, 153, 0.7)',    // pink
+        'rgba(234, 179, 8, 0.7)',     // yellow
+        'rgba(249, 115, 22, 0.7)',    // orange
+        'rgba(20, 184, 166, 0.7)',    // teal
+        'rgba(244, 63, 94, 0.7)',     // rose
+        'rgba(120, 113, 108, 0.7)',   // stone
+        'rgba(5, 150, 105, 0.7)'      // emerald
+    ];
+
+    const defaultBorderColors = [
+        'rgba(59, 130, 246, 1)',
+        'rgba(16, 185, 129, 1)',
+        'rgba(139, 92, 246, 1)',
+        'rgba(236, 72, 153, 1)',
+        'rgba(234, 179, 8, 1)',
+        'rgba(249, 115, 22, 1)',
+        'rgba(20, 184, 166, 1)',
+        'rgba(244, 63, 94, 1)',
+        'rgba(120, 113, 108, 1)',
+        'rgba(5, 150, 105, 1)'
+    ];
+
+    // Prepare channel data - handle cases where data.channels is an object or array
+    let channelLabels = [];
+    let channelValues = [];
+    
+    if (Array.isArray(data.channels)) {
+        // If channels is an array of values, use generic labels
+        channelValues = data.channels;
+        channelLabels = data.channels.map((_, i) => `Channel ${i+1}`);
+        
+        // If channel_names is provided, use those as labels
+        if (data.channel_names && Array.isArray(data.channel_names)) {
+            channelLabels = data.channel_names;
+        }
+    } else if (typeof data.channels === 'object' && data.channels !== null) {
+        // If channels is an object, use keys as labels and values as data
+        channelLabels = Object.keys(data.channels);
+        channelValues = Object.values(data.channels);
+    } else {
+        // Fallback for unexpected formats
+        console.error('Unexpected channels data format:', data.channels);
+        channelLabels = ['Unknown'];
+        channelValues = [0];
+    }
+
+    // Slice colors to match the number of channels
+    const backgroundColors = defaultColors.slice(0, channelLabels.length);
+    const borderColors = defaultBorderColors.slice(0, channelLabels.length);
+
+    // Create new chart
+    ctx.chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: channelLabels,
+            datasets: [{
+                label: 'New Customers',
+                data: channelValues,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: channelLabels.length <= 10, // Hide legend if too many channels
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Customers'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        autoSkip: channelLabels.length > 8, // Auto skip if many labels
+                        maxRotation: channelLabels.length > 8 ? 45 : 0
                     }
                 }
             }
