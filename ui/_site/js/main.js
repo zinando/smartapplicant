@@ -291,6 +291,113 @@ function exportAnalyticsDataToExcel(data) {
     // Create a workbook with multiple sheets for different sections
     const workbook = XLSX.utils.book_new();
     
+    // Helper function to safely get nested properties
+    const getSafe = (obj, path, defaultValue = 0) => {
+        return path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : defaultValue), obj);
+    };
+    
+    // Helper function to format currency
+    const formatCurrency = (value) => {
+        const symbol = getSafe(data, 'currency.symbol', '');
+        return value !== undefined ? `${symbol}${value}` : `${symbol}0`;
+    };
+    
+    // Helper function to format percentage
+    const formatPercentage = (value, total = 1) => {
+        if (value === undefined) return '0%';
+        if (typeof value === 'number') return `${value.toFixed(2)}%`;
+        return `${((value / total) * 100).toFixed(2)}%`;
+    };
+    
+    // 1. Main Summary Sheet
+    const summaryData = [
+        ["Metric", "Value"],
+        ["Total Revenue", formatCurrency(getSafe(data, 'total_revenue'))],
+        ["Active Users", getSafe(data, 'active_users')],
+        ["New Customers", getSafe(data, 'customer_acquisition.new_customers')],
+        ["Customer Acquisition Cost", formatCurrency(getSafe(data, 'customer_acquisition.cac'))]
+    ];
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
+    
+    // 2. Revenue Breakdown Sheet
+    const totalRevenue = getSafe(data, 'total_revenue', 1); // Avoid division by zero
+    const revenueData = [
+        ["Revenue Type", "Amount", "Percentage"],
+        ["Total Revenue", formatCurrency(totalRevenue), "100%"],
+        ["Credit Purchases", formatCurrency(getSafe(data, 'credit_purchases.total_revenue')), 
+         formatPercentage(getSafe(data, 'credit_purchases.total_revenue'), totalRevenue)],
+        ["Subscriptions", formatCurrency(getSafe(data, 'subscriptions.total_revenue')), 
+         formatPercentage(getSafe(data, 'subscriptions.total_revenue'), totalRevenue)],
+        [],
+        ["Subscription Plan", "Revenue", "Percentage"]
+    ];
+    
+    // Add subscription plans if they exist
+    const subscriptionPlans = getSafe(data, 'subscriptions.by_plan', {});
+    for (const [planName, planData] of Object.entries(subscriptionPlans)) {
+        revenueData.push([
+            planName,
+            formatCurrency(getSafe(planData, 'revenue')),
+            formatPercentage(getSafe(planData, 'percentage'))
+        ]);
+    }
+    
+    const revenueSheet = XLSX.utils.aoa_to_sheet(revenueData);
+    XLSX.utils.book_append_sheet(workbook, revenueSheet, "Revenue Breakdown");
+    
+    // 3. Recent Orders Sheet
+    const ordersHeader = ["Order #", "Date", "Type", "Amount", "Payment Method", "Status", "Customer", "Email", "Plan"];
+    const ordersData = [ordersHeader];
+    
+    const recentOrders = getSafe(data, 'recent_orders', []);
+    for (const order of recentOrders) {
+        ordersData.push([
+            getSafe(order, 'order_number', 'N/A'),
+            order.created_at ? new Date(order.created_at).toLocaleString() : 'N/A',
+            getSafe(order, 'order_type', 'N/A'),
+            formatCurrency(getSafe(order, 'total')),
+            getSafe(order, 'payment_method', 'N/A'),
+            getSafe(order, 'payment_status', 'N/A'),
+            `${getSafe(order, 'user__first_name', '')} ${getSafe(order, 'user__last_name', '')}`.trim() || 'N/A',
+            getSafe(order, 'user__email', 'N/A'),
+            getSafe(order, 'subscription__subscription_type__name', 'N/A')
+        ]);
+    }
+    
+    const ordersSheet = XLSX.utils.aoa_to_sheet(ordersData);
+    XLSX.utils.book_append_sheet(workbook, ordersSheet, "Recent Orders");
+    
+    // 4. Plan Performance Sheet
+    const planHeader = ["Plan", "Subscribers", "MRR", "Avg Lifetime", "Churn Rate", "Conversion Rate", "Renewal Rate"];
+    const planData = [planHeader];
+    
+    const planPerformance = getSafe(data, 'plan_performance', []);
+    for (const plan of planPerformance) {
+        planData.push([
+            getSafe(plan, 'plan', 'N/A'),
+            getSafe(plan, 'subscribers', 0),
+            formatCurrency(getSafe(plan, 'mrr')),
+            getSafe(plan, 'avg_lifetime', 'N/A'),
+            formatPercentage(getSafe(plan, 'churn_rate')),
+            formatPercentage(getSafe(plan, 'conversion_rate')),
+            formatPercentage(getSafe(plan, 'renewal_rate'))
+        ]);
+    }
+    
+    const planSheet = XLSX.utils.aoa_to_sheet(planData);
+    XLSX.utils.book_append_sheet(workbook, planSheet, "Plan Performance");
+    
+    // Generate and download the Excel file
+    const fileName = `Revenue_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+}
+
+
+function exportAnalyticsDataToExcelxxx(data){
+    // Create a workbook with multiple sheets for different sections
+    const workbook = XLSX.utils.book_new();
+    
     // 1. Main Summary Sheet
     const summaryData = [
         ["Metric", "Value"],
@@ -352,3 +459,4 @@ function exportAnalyticsDataToExcel(data) {
     const fileName = `Revenue_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
     XLSX.writeFile(workbook, fileName);
 }
+
