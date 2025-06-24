@@ -118,7 +118,7 @@
                 <input type="password" id="password" name="password" required autocomplete="current-password" minlength="8"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 <div class="flex justify-end mt-1">
-                    <a href="/password-reset" class="text-sm text-blue-600 hover:text-blue-800">Forgot password?</a>
+                    <a id="forgot-password-btn" class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">Forgot password?</a>
                 </div>
             </div>
 
@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnText = document.getElementById('btn-text');
     const spinner = document.getElementById('spinner');
     const formError = document.getElementById('form-error');
+    const forgotPasswordBtn = document.getElementById('forgot-password-btn');
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -191,6 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
             behavior: 'smooth'
         });
     }
+
+    forgotPasswordBtn.addEventListener('click', () => {
+        showWhatsAppRedirect('+2347031104270', 'Chat with us', 'You seem to have forgotten your password. Please click the button below to chat with us on WhatsApp for assistance.');
+    });
 });
 </script>
     </main>
@@ -259,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <script src="/js/user/queryBackend.js"></script>
     <script src="/js/user/auth.js"></script>
     <script src="/js/paystack.js"></script>
+    <script src="/js/whatsapp.js"></script>
 
     <!-- display mobile menu on click -->
     <script>

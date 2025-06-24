@@ -139,6 +139,13 @@
                 </svg>
                 Analytics
             </a>
+            <!-- change password button for admin users. visible only for admins -->
+            <a href="/change_password" class="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md group hidden" id="password-change-admin">
+                <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 0v4m0-4h4m-4 0H8m6.586 6.586a2 2 0 01-2.828 0l-1.414-1.414a2 2 0 010-2.828l1.414-1.414a2 2 0 012.828 0l1.414 1.414a2 2 0 010 2.828zM16 16l3.586-3.586a2 2 0 000-2.828l-1.414-1.414a2 2 0 00-2.828 0L12 10m4 6l3.586-3.586a2 2 0 000-2.828l-1.414-1.414a2 2 0 00-2.828 0L12 10"/>
+                </svg>
+                Change Password
+            </a>
 
             <a href="/profile" class="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md group">
                 <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,12 +171,19 @@
     document.addEventListener('DOMContentLoaded', function() {
         const user = API.getUser();
         const isAdmin = user && user.is_admin;
+        const isSuperAdmin = user && user.is_superAdmin;
         const analyticsLink = document.getElementById('analytics-link');
-        // console.log('User:', user);
-        if (isAdmin) {
+        const passwordChangeAdminLink = document.getElementById('password-change-admin');
+        
+        if (isSuperAdmin) {
             analyticsLink.classList.remove('hidden');
-        } else {
+            passwordChangeAdminLink.classList.remove('hidden');
+        } else if (isAdmin) {
+            analyticsLink.classList.remove('hidden');
+            passwordChangeAdminLink.classList.add('hidden');
+        }else {
             analyticsLink.classList.add('hidden');
+            passwordChangeAdminLink.classList.add('hidden');
         }
     });
 </script>
@@ -1199,6 +1213,7 @@ async function submitResumeData(formData) {
     <script src="/js/user/queryBackend.js"></script>
     <script src="/js/user/auth.js"></script>
     <script src="/js/paystack.js"></script>
+    <script src="/js/whatsapp.js"></script>
 
     <!-- display mobile menu on click -->
     <script>
