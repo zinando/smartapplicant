@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await getNumberOfResumeCredits();
         if (numberOfResumeCredits > 0) {
             data = {
-                order_type: 'resume_credits',
+                order_type: 'resume_credit',
                 credits: numberOfResumeCredits,
                 currency: 'NGN' // or 'USD' based on user preference
             };
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Call the payment API
                 toggleButtonSpinner('resume-credit-btn', 'Buy Credits Now', isLoading=false); // hide spinner
-                await triggerPayment(result.order, type='resume_credits');
+                await triggerPayment(result.order, type='resume_credit');
             } catch (error) {
                 console.error('Error submitting resume data: ', error.message);
                 showToast(error.message, 'error');
