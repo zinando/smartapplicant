@@ -221,7 +221,7 @@ user:
               
               <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                 <button type="button" id="cancel-profile" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Cancel</button>
-                <button type="submit" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:col-start-2 sm:text-sm">Update Profile</button>
+                <button type="submit" id="update-profile-btn" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:col-start-2 sm:text-sm">Update Profile</button>
               </div>
             </form>
           </div>
@@ -249,7 +249,7 @@ user:
               
               <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                 <button type="button" id="cancel-password" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Cancel</button>
-                <button type="submit" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:col-start-2 sm:text-sm">Change Password</button>
+                <button type="submit" id="change-password-btn" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:col-start-2 sm:text-sm">Change Password</button>
               </div>
             </form>
           </div>
@@ -260,9 +260,9 @@ user:
 
 {% block extra_js %}
 <script>
-    let autoRenewEnabled = true;
-    let user = {};
-    document.addEventListener('DOMContentLoaded', () => {
+  let autoRenewEnabled = true;
+  let user = {};
+  document.addEventListener('DOMContentLoaded', () => {
         const basicTitle = document.getElementById('basic-title');
         const proTitle = document.getElementById('premium-title');
         const subscriptionSection = document.getElementById('subscription-info');
@@ -315,177 +315,180 @@ user:
     let isProcessing = false;
 
     async function toggleAutoRenewal() {
-    if (isProcessing) return;
-    isProcessing = true;
-    
-    const btn = document.getElementById('auto-renew-btn');
-    const icon = document.getElementById('auto-renew-icon');
-    const text = document.getElementById('auto-renew-text');
-    const errorDisplay = document.getElementById('auto-renew-error-display');
-    const successDisplay = document.getElementById('auto-renew-success-display');
-    
-    // Disable button during processing
-    btn.disabled = true;
-    errorDisplay.textContent = '';
-    successDisplay.textContent = '';
-    
-    // Start rotation
-    icon.classList.add('rotate-animation');
-    
-    try {
-        // Add delay before making the API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      const btn = document.getElementById('auto-renew-btn');
+      const icon = document.getElementById('auto-renew-icon');
+      const text = document.getElementById('auto-renew-text');
+      const errorDisplay = document.getElementById('auto-renew-error-display');
+      const successDisplay = document.getElementById('auto-renew-success-display');
+      
+      // Disable button during processing
+      btn.disabled = true;
+      errorDisplay.textContent = '';
+      successDisplay.textContent = '';
+      
+      // Start rotation
+      icon.classList.add('rotate-animation');
+      
+      try {
+          // Add delay before making the API call
+          await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const success = await updateAutoRenewalStatus(!autoRenewEnabled);
-        
-        if (success) {
-            // Update state only after successful API call
-            autoRenewEnabled = !autoRenewEnabled;
-            
-            // Update UI
-            if (autoRenewEnabled) {
-                icon.classList.remove('text-gray-500', 'rotate-animation');
-                icon.classList.add('text-green-500');
-                text.textContent = 'Auto-Renew: On';
-                btn.classList.remove('bg-gray-100');
-                btn.classList.add('bg-white');
-            } else {
-                icon.classList.remove('text-green-500', 'rotate-animation');
-                icon.classList.add('text-gray-500');
-                text.textContent = 'Auto-Renew: Off';
-                btn.classList.remove('bg-white');
-                btn.classList.add('bg-gray-100');
-            }
-        } else {
-            throw new Error('Failed to update auto renewal state');
-        }
-    } catch (error) {
-        errorDisplay.textContent = error.message;
-        icon.classList.remove('rotate-animation');
-    } finally {
-        btn.disabled = false;
-        isProcessing = false;
+          const success = await updateAutoRenewalStatus(!autoRenewEnabled);
+          
+          if (success) {
+              // Update state only after successful API call
+              autoRenewEnabled = !autoRenewEnabled;
+              
+              // Update UI
+              if (autoRenewEnabled) {
+                  icon.classList.remove('text-gray-500', 'rotate-animation');
+                  icon.classList.add('text-green-500');
+                  text.textContent = 'Auto-Renew: On';
+                  btn.classList.remove('bg-gray-100');
+                  btn.classList.add('bg-white');
+              } else {
+                  icon.classList.remove('text-green-500', 'rotate-animation');
+                  icon.classList.add('text-gray-500');
+                  text.textContent = 'Auto-Renew: Off';
+                  btn.classList.remove('bg-white');
+                  btn.classList.add('bg-gray-100');
+              }
+          } else {
+              throw new Error('Failed to update auto renewal state');
+          }
+      } catch (error) {
+          errorDisplay.textContent = error.message;
+          icon.classList.remove('rotate-animation');
+      } finally {
+          btn.disabled = false;
+          isProcessing = false;
+      }
     }
-}
 
 // Actual API function
-async function updateAutoRenewalStatus(newStatus) {
-    try {
-        const response = await API.request('/api/auth/subscription/', 'PUT', {
-            subscriptionAutoRenewal: newStatus
-        });
-        
-        if (!response.ok) throw new Error(response.statusText);
-        const data = await response.json();
-        if (data.status !== 1) throw new Error(data.message);
+  async function updateAutoRenewalStatus(newStatus) {
+      try {
+          const response = await API.request('/api/auth/subscription/', 'PUT', {
+              subscriptionAutoRenewal: newStatus
+          });
+          
+          if (!response.ok) throw new Error(response.statusText);
+          const data = await response.json();
+          if (data.status !== 1) throw new Error(data.message);
 
-        // Store user data
-        API.setUser(data.user);
-        
-        document.getElementById('auto-renew-success-display').textContent = data.message;
-        return true;
-    } catch (error) {
-        console.error('API Error:', error);
-        throw error; // Re-throw to be caught in toggleAutoRenewal
-    }
-}
-
-// Modal control functions
-function openUserSettingsModal(initialTab = 'profile') {
-  const modal = document.getElementById('user-settings-modal');
-  modal.classList.remove('hidden');
-  
-  // Load user data
-  loadUserData();
-  
-  // Show initial tab
-  switchTab(initialTab);
-  
-  // Trap focus within modal
-  modal.addEventListener('keydown', trapTabKey);
-}
-
-function closeUserSettingsModal() {
-  const modal = document.getElementById('user-settings-modal');
-  modal.classList.add('hidden');
-  modal.removeEventListener('keydown', trapTabKey);
-}
-
-function switchTab(tabName) {
-  if (tabName === 'profile') {
-    document.getElementById('profile-tab').classList.add('border-blue-500', 'text-blue-600');
-    document.getElementById('profile-tab').classList.remove('border-transparent', 'text-gray-500');
-    document.getElementById('password-tab').classList.add('border-transparent', 'text-gray-500');
-    document.getElementById('password-tab').classList.remove('border-blue-500', 'text-blue-600');
-    document.getElementById('profile-form').classList.remove('hidden');
-    document.getElementById('password-form').classList.add('hidden');
-  } else {
-    document.getElementById('password-tab').classList.add('border-blue-500', 'text-blue-600');
-    document.getElementById('password-tab').classList.remove('border-transparent', 'text-gray-500');
-    document.getElementById('profile-tab').classList.add('border-transparent', 'text-gray-500');
-    document.getElementById('profile-tab').classList.remove('border-blue-500', 'text-blue-600');
-    document.getElementById('password-form').classList.remove('hidden');
-    document.getElementById('profile-form').classList.add('hidden');
+          // Store user data
+          API.setUser(data.user);
+          
+          document.getElementById('auto-renew-success-display').textContent = data.message;
+          return true;
+      } catch (error) {
+          console.error('API Error:', error);
+          throw error; // Re-throw to be caught in toggleAutoRenewal
+      }
   }
-}
 
-// Load user data into form
-function loadUserData() {
-  if (user) {
-    document.getElementById('form-email').value = user.email || '';
-    document.getElementById('form-first-name').value = user.first_name || '';
-    document.getElementById('form-last-name').value = user.last_name || '';
-    document.getElementById('form-phone').value = user.phone_number || '';
-  }
-}
-
-// Form submission handlers
-document.getElementById('update-profile-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const form = e.target;
-  const submitButton = form.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-  
-  try {
-     // Add delay before making the API call
-     await new Promise(resolve => setTimeout(resolve, 2000));
-
-    const response = await API.request('/api/auth/profile/', 'POST', {
-      email: form.email.value,
-      firstName: form['first-name'].value,
-      lastName: form['last-name'].value,
-      phone: form.phone.value
-    });
+  // Modal control functions
+  function openUserSettingsModal(initialTab = 'profile') {
+    const modal = document.getElementById('user-settings-modal');
+    modal.classList.remove('hidden');
     
-    if (response.ok) {
-      const data = await response.json();
-      if (data.status === 1){
-        API.setUser(data.user);
-        showToast(data.message, 'success');
-        closeUserSettingsModal();
-
-         // Add delay before making the API call
-         await new Promise(resolve => setTimeout(resolve, 2000));
-         window.location.reload();
-
-      } else throw new Error(data.message);
-    } else {
-      throw new Error('Failed to update profile');
-    }
-  } catch (error) {
-    showToast(error.message, 'error');
-  } finally {
-    submitButton.disabled = false;
+    // Load user data
+    loadUserData();
+    
+    // Show initial tab
+    switchTab(initialTab);
+    
+    // Trap focus within modal
+    modal.addEventListener('keydown', trapTabKey);
   }
+
+  function closeUserSettingsModal() {
+    const modal = document.getElementById('user-settings-modal');
+    modal.classList.add('hidden');
+    modal.removeEventListener('keydown', trapTabKey);
+  }
+
+  function switchTab(tabName) {
+    if (tabName === 'profile') {
+      document.getElementById('profile-tab').classList.add('border-blue-500', 'text-blue-600');
+      document.getElementById('profile-tab').classList.remove('border-transparent', 'text-gray-500');
+      document.getElementById('password-tab').classList.add('border-transparent', 'text-gray-500');
+      document.getElementById('password-tab').classList.remove('border-blue-500', 'text-blue-600');
+      document.getElementById('profile-form').classList.remove('hidden');
+      document.getElementById('password-form').classList.add('hidden');
+    } else {
+      document.getElementById('password-tab').classList.add('border-blue-500', 'text-blue-600');
+      document.getElementById('password-tab').classList.remove('border-transparent', 'text-gray-500');
+      document.getElementById('profile-tab').classList.add('border-transparent', 'text-gray-500');
+      document.getElementById('profile-tab').classList.remove('border-blue-500', 'text-blue-600');
+      document.getElementById('password-form').classList.remove('hidden');
+      document.getElementById('profile-form').classList.add('hidden');
+    }
+  }
+
+  // Load user data into form
+  function loadUserData() {
+    if (user) {
+      document.getElementById('form-email').value = user.email || '';
+      document.getElementById('form-first-name').value = user.first_name || '';
+      document.getElementById('form-last-name').value = user.last_name || '';
+      document.getElementById('form-phone').value = user.phone_number || '';
+    }
+  }
+
+  // Form submission handlers
+  document.getElementById('update-profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    toggleButtonSpinner('update-profile-btn', 'Update Profile', true);
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate 2 seconds delay
+    
+    const form = e.target;
+    // const submitButton = form.querySelector('button[type="submit"]');
+    // submitButton.disabled = true;
+    
+    try {
+      const response = await API.request('/api/auth/profile/', 'POST', {
+        email: form.email.value,
+        firstName: form['first-name'].value,
+        lastName: form['last-name'].value,
+        phone: form.phone.value
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 1){
+          API.setUser(data.user);
+          showToast(data.message, 'success');
+          closeUserSettingsModal();
+
+          // Add delay before making the API call
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          window.location.reload();
+
+        } else throw new Error(data.message);
+      } else {
+        throw new Error('Failed to update profile');
+      }
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      toggleButtonSpinner('update-profile-btn', 'Update Profile', false);
+    }
 });
 
 document.getElementById('change-password-form').addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  toggleButtonSpinner('change-password-btn', 'Changing Password', true);
+  await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate 2 seconds delay
   
   const form = e.target;
-  const submitButton = form.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
+  // const submitButton = form.querySelector('button[type="submit"]');
+  // submitButton.disabled = true;
   
   if (form['new-password'].value !== form['confirm-password'].value) {
     showToast('New passwords do not match', 'error');
@@ -494,9 +497,6 @@ document.getElementById('change-password-form').addEventListener('submit', async
   }
   
   try {
-     // Add delay before making the API call
-     await new Promise(resolve => setTimeout(resolve, 2000));
-
     const response = await API.request('/api/auth/profile/', 'PUT', {
       currentPassword: form['current-password'].value,
       newPassword: form['new-password'].value
@@ -516,7 +516,7 @@ document.getElementById('change-password-form').addEventListener('submit', async
   } catch (error) {
     showToast(error.message, 'error');
   } finally {
-    submitButton.disabled = false;
+    toggleButtonSpinner('change-password-btn', 'Change Password', false);
   }
 });
 
