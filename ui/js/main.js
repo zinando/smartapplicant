@@ -105,7 +105,7 @@ class ResumePreview {
   }
 
   renderHeader() {
-    const { first_name, last_name, other_name, email, phone, linkedin, portfolio, city, state, country} = this.state.personalInfo;
+    const { first_name, last_name, other_name, email, phone, linkedin, portfolio, git, city, state, country} = this.state.personalInfo;
     return `
       <header class="mb-6">
         <h1 class="text-2xl font-bold text-gray-800">
@@ -117,6 +117,7 @@ class ResumePreview {
           ${phone ? `<span class="text-sm text-gray-600">${phone}</span>` : ''}
           ${linkedin ? `<a href="https://linkedin.com/in/${linkedin}" class="text-sm text-blue-600 hover:underline">LinkedIn</a>` : ''}
           ${portfolio ? `<a href="${portfolio}" class="text-sm text-blue-600 hover:underline">Portfolio</a>` : ''}
+          ${git ? `<a href="${git}" class="text-sm text-blue-600 hover:underline">GitHub</a>` : ''}
         </div>
       </header>
     `;

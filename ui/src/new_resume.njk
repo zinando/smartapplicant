@@ -101,6 +101,11 @@ title: Create Resume
                                 
                                 <input type="url" id="portfolio" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="https://">
                             </div>
+                             <div>
+                                <label for="git" class="block text-xs font-medium text-gray-700 mb-1">Version Control<span class="text-xs text-gray-500"> (optional)</span></label>
+                                
+                                <input type="url" id="git" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g https://github.com/myname">
+                            </div>
                         </div>
                         <label class="block text-xs font-medium text-gray-700 mb-1 mt-5">Address*</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -524,6 +529,7 @@ function prepareFormData() {
         phone: document.getElementById('phone').value,
         linkedin: document.getElementById('linkedin').value,
         portfolio: document.getElementById('portfolio').value,
+        git: document.getElementById('git').value,
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
         country: document.getElementById('country').value,
