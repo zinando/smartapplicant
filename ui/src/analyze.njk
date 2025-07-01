@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorDisplay.textContent = ''; // Clear previous errors
 
         // if user is not premium or has no resume credits, call the function that will inform them and direct them to premium page
-        if (isPremiumUser() && hasResumeCredits()) {
+        if (!isPremiumUser() && !hasResumeCredits()) {
             // showToast('You need to be a premium member or have resume credits to generate an optimized resume.', 'error');
             await showPremiumRequiredModal('You need resume credits or premium subscription to generate an optimized resume.');
             return;
