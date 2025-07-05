@@ -153,7 +153,8 @@
                 </svg>
                 Profile
             </a>
-            <button type="button" onclick="logoutUser()" class="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md group">
+            <button type="button" id="logout-btn" onclick="logoutUser()" 
+                class="flex justify-center py-3 px-4 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
@@ -397,20 +398,71 @@
           <div id="password-form" class="hidden mt-5">
             <form id="change-password-form">
               <div class="space-y-4">
-                <div>
+                <!-- <div>
                   <label for="current-password" class="block text-sm font-medium text-gray-700">Current password</label>
                   <input type="password" name="current-password" id="current-password" autocomplete="current-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
+                </div> -->
+                <label for="current-password" class="block text-sm font-medium text-gray-700">Current password</label>
+                <div class="relative">
+                  <input type="password" name="current-password" id="current-password" autocomplete="current-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
+                  <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none" data-password-toggle="current-password">
+                        <!-- Eye icon for hidden password -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                        <!-- Eye slash icon for visible password (hidden by default) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-slash-icon hidden" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" />
+                            <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                        </svg>
+                    </button>
                 </div>
                 
-                <div>
+                <!-- <div>
                   <label for="new-password" class="block text-sm font-medium text-gray-700">New password</label>
                   <input type="password" name="new-password" id="new-password" autocomplete="new-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
                   <p class="mt-1 text-xs text-gray-500">Minimum 8 characters with at least one number and one letter</p>
+                </div> -->
+
+                <label for="new-password" class="block text-sm font-medium text-gray-700">New password</label>
+                <div class="relative">
+                  <input type="password" name="new-password" id="new-password" autocomplete="new-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
+                  <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none" data-password-toggle="new-password">
+                        <!-- Eye icon for hidden password -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                        <!-- Eye slash icon for visible password (hidden by default) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-slash-icon hidden" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" />
+                            <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                        </svg>
+                    </button>
                 </div>
+                <p class="mt-1 text-xs text-gray-500">Minimum 8 characters with at least one number and one letter</p>
                 
-                <div>
+                <!-- <div>
                   <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
                   <input type="password" name="confirm-password" id="confirm-password" autocomplete="new-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
+                </div> -->
+                
+                <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
+                <div class="relative">
+                  <input type="password" name="confirm-password" id="confirm-password" autocomplete="new-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
+                  <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none" data-password-toggle="confirm-password">
+                        <!-- Eye icon for hidden password -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                        <!-- Eye slash icon for visible password (hidden by default) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-slash-icon hidden" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd" />
+                            <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                        </svg>
+                    </button>
                 </div>
               </div>
               
@@ -438,7 +490,6 @@
 
         // user object
         user = API.getUser();
-        console.log(user);
         document.getElementById('first_name').textContent = user.first_name;
         document.getElementById('last_name').textContent = user.last_name;
         document.getElementById('email').textContent = user.email;
@@ -535,7 +586,7 @@
       }
     }
 
-// Actual API function
+  // Actual API function
   async function updateAutoRenewalStatus(newStatus) {
       try {
           const response = await API.request('/api/auth/subscription/', 'PUT', {

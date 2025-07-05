@@ -40,12 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function logoutUser() {
+    toggleButtonSpinner(btnId="logout-btn", btnText="Logout", isLoading=true, loadingText='Logging you out...');
+    // delay for 1 second to show the spinner
+    await new Promise(resolve => setTimeout(resolve, 1000));
     try {
         await AuthService.logout();
         // Redirect to home page after successful logout
         window.location.href = '/';
     } catch (error) {
         console.error('Logout failed:', error);
+        toggleButtonSpinner(btnId="logout-btn", btnText="Logout", isLoading=false, loadingText='Logging you out...');
         
     }
 }

@@ -56,6 +56,41 @@ function setButtonState(buttonId, isDisabled, enabledClass = 'bg-blue-600 hover:
     }
 }
 
+// Function to toggle password visibility
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all password toggle buttons
+    const toggleButtons = document.querySelectorAll('[data-password-toggle]');
+    
+    toggleButtons.forEach(button => {
+        const targetId = button.getAttribute('data-password-toggle');
+        const passwordInput = document.getElementById(targetId);
+        const eyeIcon = button.querySelector('.eye-icon');
+        const eyeSlashIcon = button.querySelector('.eye-slash-icon');
+        
+        // Click event handler
+        button.addEventListener('click', function() {
+            togglePasswordVisibility(passwordInput, eyeIcon, eyeSlashIcon);
+        });
+        
+        // Touch event handler for mobile
+        button.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            togglePasswordVisibility(passwordInput, eyeIcon, eyeSlashIcon);
+        });
+    });
+    
+    function togglePasswordVisibility(input, eyeIcon, eyeSlashIcon) {
+        // Toggle the password input type
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        
+        // Toggle the eye icons
+        eyeIcon.classList.toggle('hidden');
+        eyeSlashIcon.classList.toggle('hidden');
+    }
+});
+
+
 class ResumePreview {
   constructor(previewContainerId) {
     this.previewContainer = document.getElementById(previewContainerId);
