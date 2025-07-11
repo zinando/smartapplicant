@@ -135,7 +135,7 @@ title: Dashboard
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
             </svg>
-            <div class="mt-4 flex text-sm text-gray-600">
+            <div class="mt-4 text-sm text-gray-600"> <!-- i removed 'flex' from the class list -->
                 <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                     <span>Upload a file</span>
                     <input id="user-resume-upload" type="file" class="sr-only" accept=".pdf,.docx">
@@ -353,11 +353,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelUpload = document.getElementById('cancel-upload');
     const confirmUpload = document.getElementById('confirm-upload');
     const fileInput = document.getElementById('user-resume-upload');
+    const inforText = document.getElementById('results');
     
     // Open modal from either button
     [uploadBtn, emptyUploadBtn].forEach(btn => {
         btn.addEventListener('click', () => {
             uploadModal.classList.remove('hidden');
+            fileInput.value = ''; // Reset file input
+            changeInforText(false);
         });
     });
     
@@ -367,11 +370,25 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadModal.classList.add('hidden');
             fileInput.value = '';
             confirmUpload.disabled = true;
+            changeInforText(false);
         });
     });
     
     fileInput.addEventListener('change', () => {
         confirmUpload.disabled = !fileInput.files.length;
+        if (fileInput.files.length) {
+            const fileName = fileInput.files[0].name; 
+            var label = `Selected file: ${fileName.slice(0, 35)}`;
+            // Validate file name length
+            if (fileName.split('.')[0].length > 15) {
+                label += ' (File name is too long, max 15 characters)';
+            } else {
+                label += ' (File name will be used as resume title)';
+            }
+            changeInforText(true, label);
+        } else {
+            changeInforText(true);
+        }
     });
     
     confirmUpload.addEventListener('click', async () => {
@@ -425,7 +442,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     
-
+    function changeInforText(isFileSelected = false, label = 'No file selected') {
+        if (!isFileSelected) {
+            inforText.textContent = 'File name will be used as resume title. Max char: 15';
+            inforText.classList.remove('text-red-500');
+            inforText.classList.add('text-gray-500');
+        } else {
+            inforText.textContent = label;
+            inforText.classList.remove('text-gray-500');
+            inforText.classList.add('text-red-500');
+        }
+    }
 
     const deleteResume  = async (resumeId) => {
             

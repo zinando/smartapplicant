@@ -2,12 +2,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('resume-upload').addEventListener('change', (e) => {
         const fileDisplay = document.getElementById('file-display');
         const fileName = document.getElementById('file-name');
+        const uploadButtonContainer = document.getElementById('upload-button-container');
         
         if (e.target.files.length > 0) {
-        fileDisplay.classList.remove('hidden');
-        fileName.textContent = e.target.files[0].name;
+            
+            uploadButtonContainer.classList.add('h-40');
+            uploadButtonContainer.classList.remove('h-32');
+            fileDisplay.classList.remove('hidden');
+            fileName.textContent = e.target.files[0].name.slice(0, 35) + (e.target.files[0].name.length > 35 ? '...' : '');
         } else {
-        fileDisplay.classList.add('hidden');
+            fileDisplay.classList.add('hidden');
+            uploadButtonContainer.classList.remove('h-40');
+            uploadButtonContainer.classList.add('h-32');
         }
     });
 
