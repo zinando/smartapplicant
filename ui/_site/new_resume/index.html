@@ -715,7 +715,7 @@ function prepareFormData() {
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
         country: document.getElementById('country').value,
-        summary: document.getElementById('summary').value
+        summary: document.getElementById('summary')? document.getElementById('summary').value : "We will generate one for you based on all the information you provide..."
     };
     
     // Collect education
