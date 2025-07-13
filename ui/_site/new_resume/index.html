@@ -198,7 +198,7 @@
 
     <main class="relative h-full w-full lg:w-4/5">
         <!-- Fixed Form Header -->
-        <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 lg:px-8 py-4">
+        <div class="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 lg:px-8 py-4"> <!--I removed 'sticky top-0 z-10' from the class list-->
             <div class="flex justify-between items-center">
                 <h2 class="text-lg font-semibold text-gray-900">Create New Resume</h2>
                 <div class="flex space-x-2">
@@ -243,7 +243,7 @@
         </div>
 
         <!-- Multi-Step Form Container -->
-        <div class="overflow-y-auto h-[calc(100vh-180px)] px-4 sm:px-6 lg:px-8 py-6">
+        <div class="px-4 sm:px-6 lg:px-8 py-6"> <!--i removed 'overflow-y-auto h-[calc(100vh-180px)]' from the class list-->
             <form id="resume-form" class="max-w-3xl mx-auto">
                 <!-- Step 1: Personal Information -->
                 <div id="step-1-content" class="space-y-6">
@@ -530,7 +530,12 @@
                                 <input type="radio" id="template-1" name="template" value="professional" class="hidden peer" checked>
                                 <label for="template-1" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 peer-checked:border-blue-600 peer-checked:ring-1 peer-checked:ring-blue-600">
                                     <div class="flex items-center">
-                                        <div class="w-16 h-20 bg-gray-100 border border-gray-300 mr-4"></div>
+                                        <!-- <div class="w-16 h-20 bg-gray-100 border border-gray-300 mr-4"></div> -->
+                                         <img 
+                                            src="/images/templates/professional.png" 
+                                            alt="Professional resume template preview"
+                                            class="w-16 h-20 object-cover border border-gray-200 mr-4 rounded-sm"
+                                        >
                                         <div>
                                             <h4 class="text-sm font-medium text-gray-900">Professional</h4>
                                             <p class="text-xs text-gray-500 mt-1">Clean, ATS-friendly layout</p>
@@ -542,7 +547,12 @@
                                 <input type="radio" id="template-2" name="template" value="modern" class="hidden peer">
                                 <label for="template-2" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 peer-checked:border-blue-600 peer-checked:ring-1 peer-checked:ring-blue-600">
                                     <div class="flex items-center">
-                                        <div class="w-16 h-20 bg-gray-100 border border-gray-300 mr-4"></div>
+                                        <!-- <div class="w-16 h-20 bg-gray-100 border border-gray-300 mr-4"></div> -->
+                                        <img 
+                                            src="/images/templates/modern.png" 
+                                            alt="Modern resume template preview"
+                                            class="w-16 h-20 object-cover border border-gray-200 mr-4 rounded-sm"
+                                        >
                                         <div>
                                             <h4 class="text-sm font-medium text-gray-900">Modern</h4>
                                             <p class="text-xs text-gray-500 mt-1">Creative with side columns</p>
@@ -701,6 +711,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function initializeTemplate() {
+    // Initialize the resume preview
+    const resumePreview = new ResumePreview('preview-container');
+    resumePreview.updateSection('personalInfo', formData.personal_info);
+    resumePreview.updateSection('education', formData.education);
+    resumePreview.updateSection('experiences', formData.experiences);
+    resumePreview.updateSection('certifications', formData.certifications);
+    resumePreview.updateSection('skills', formData.skills);
+    
+    // Get the template radio inputs
+    const templateRadios = document.querySelectorAll('input[name="template"]');
+    
+    // Add event listeners for template selection
+    templateRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                // Set the selected template in the preview
+                resumePreview.setTemplate(e.target.value);
+                
+                // Store the selected template in formData
+                formData.template = e.target.value;
+                formData.template_id = e.target.value;
+            }
+        });
+    });
+    
+    // Initialize with the default selected template
+    const defaultTemplate = document.querySelector('input[name="template"]:checked').value;
+    resumePreview.setTemplate(defaultTemplate);
+    formData.template = defaultTemplate;
+    formData.template_id = defaultTemplate;
+}
+
 function prepareFormData() {
     // Collect all form data
     formData.personal_info = {
@@ -753,14 +796,18 @@ function prepareFormData() {
 
     // Collect skills
     formData.skills = document.getElementById('skills').value.split(',').map(skill => skill.trim()).filter(skill => skill);
-    formData.template = document.querySelector('input[name="template"]:checked').value;
+    // formData.template = document.querySelector('input[name="template"]:checked').value;
 
-    const resumePreview = new ResumePreview('preview-container');
-    resumePreview.updateSection('personalInfo', formData.personal_info);
-    resumePreview.updateSection('education', formData.education);
-    resumePreview.updateSection('experiences', formData.experiences);
-    resumePreview.updateSection('certifications', formData.certifications);
-    resumePreview.updateSection('skills', formData.skills);
+    // Initialize the resume preview with the collected data
+    initializeTemplate();
+
+
+    // const resumePreview = new ResumePreview('preview-container');
+    // resumePreview.updateSection('personalInfo', formData.personal_info);
+    // resumePreview.updateSection('education', formData.education);
+    // resumePreview.updateSection('experiences', formData.experiences);
+    // resumePreview.updateSection('certifications', formData.certifications);
+    // resumePreview.updateSection('skills', formData.skills);
 
     return formData;
 }
