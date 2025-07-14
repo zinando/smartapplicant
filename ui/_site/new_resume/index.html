@@ -201,10 +201,22 @@
         <div class="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 lg:px-8 py-4"> <!--I removed 'sticky top-0 z-10' from the class list-->
             <div class="flex justify-between items-center">
                 <h2 class="text-lg font-semibold text-gray-900">Create New Resume</h2>
-                <div class="flex space-x-2">
+                <!-- <div class="flex space-x-2">
                     <button id="save-draft-btn" class="text-xs text-gray-600 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 hover:border-gray-400 transition-colors">
                         Save Draft
                     </button>
+                </div> -->
+                <!-- Replace save-draft-btn with this -->
+                <div class="flex items-center">
+                    <button id="draft-action-btn" type="button" class="text-xs text-gray-600 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 hover:border-gray-400 transition-colors">
+                        Load Draft
+                    </button>
+                    <div id="draft-spinner" class="ml-2 hidden">
+                        <svg class="animate-spin h-4 w-4 text-blue-500" viewBox="0 0 24 24">
+                            <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+                            <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
             
@@ -597,6 +609,7 @@
 </div>
 
 
+<script src="/js/draft.js"></script>
 <script>
 let currentStep = 1;
 const formData = {};
@@ -676,21 +689,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function validateEducationStep() {
-        const educationItems = document.querySelectorAll('.education-item');
-        let allValid = educationItems.length > 0;
+    // function validateEducationStep() {
+    //     const educationItems = document.querySelectorAll('.education-item');
+    //     let allValid = educationItems.length > 0;
         
-        educationItems.forEach(item => {
-            const inputs = item.querySelectorAll('input[required]');
-            inputs.forEach(input => {
-                if (!input.value.trim()) {
-                    allValid = false;
-                }
-            });
-        });
+    //     educationItems.forEach(item => {
+    //         const inputs = item.querySelectorAll('input[required]');
+    //         inputs.forEach(input => {
+    //             if (!input.value.trim()) {
+    //                 allValid = false;
+    //             }
+    //         });
+    //     });
         
-        setButtonState('step-2-content-button', !allValid, 'bg-blue-600');
-    }
+    //     setButtonState('step-2-content-button', !allValid, 'bg-blue-600');
+    // }
 
     async function submitResumeData(data) {
         const response = await API.request('/api/user/resumes/generate/', 'POST', data);
@@ -710,6 +723,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return document.querySelector('[name=csrfmiddlewaretoken]').value;
     }
 });
+
+function validateEducationStep() {
+    const educationItems = document.querySelectorAll('.education-item');
+    let allValid = educationItems.length > 0;
+    
+    educationItems.forEach(item => {
+        const inputs = item.querySelectorAll('input[required]');
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                allValid = false;
+            }
+        });
+    });
+    
+    setButtonState('step-2-content-button', !allValid, 'bg-blue-600');
+}
 
 function initializeTemplate() {
     // Initialize the resume preview
