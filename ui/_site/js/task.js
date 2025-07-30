@@ -29,7 +29,7 @@ function renderFinalResults(data) {
     // Create section display HTML
     let sectionsHtml = '';
     for (const [section, content] of Object.entries(data.required_sections)) {
-        if (content) {
+        if (content && section !== 'errors') {
             sectionsHtml += `
                 <div class="mb-6">
                     <h4 class="font-semibold text-gray-800 mb-2 capitalize">${section.replace('_', ' ')}</h4>
@@ -38,7 +38,7 @@ function renderFinalResults(data) {
                     </div>
                 </div>
             `;
-        } else {
+        } else if (section !== 'errors') {
             sectionsHtml += `
                 <div class="mb-6">
                     <h4 class="font-semibold text-gray-800 mb-2 capitalize">${section.replace('_', ' ')}</h4>
@@ -79,7 +79,7 @@ function renderFinalResults(data) {
                     Recommendations
                 </h4>
                 <ul class="list-disc pl-5 space-y-2 text-sm text-gray-700">
-                    ${generateRecommendations(data.required_sections)}
+                    ${generateRecommendations(data.required_sections, data.required_sections.errors)}
                 </ul>
             </div>
 
@@ -116,11 +116,30 @@ function formatSectionContent(section, content) {
         case 'education':
             // Handle structured education data
             if (Array.isArray(content)) {
+                // return content.map(item => `
+                //     <div class="mb-3 pb-3 border-b border-gray-100 last:border-0">
+                //         ${item.degree ? `<p class="font-medium">${item.degree}${item.field ? ` in ${item.field}` : ''}</p>` : ''}
+                //         ${item.institution ? `<p class="text-gray-600">${item.institution}</p>` : ''}
+                //         ${item.date ? `<p class="text-sm text-gray-500">${item.date}</p>` : ''}
+                //         ${item.description ? `<p class="mt-1 text-gray-600 text-sm">${item.description}</p>` : ''}
+                //         ${item.location ? `<p class="text-xs text-gray-500">${item.location}</p>` : ''}
+                //     </div>
+                // `).join('');
                 return content.map(item => `
                     <div class="mb-3 pb-3 border-b border-gray-100 last:border-0">
-                        ${item.degree ? `<p class="font-medium">${item.degree}${item.field ? ` in ${item.field}` : ''}</p>` : ''}
-                        ${item.institution ? `<p class="text-gray-600">${item.institution}</p>` : ''}
-                        ${item.duration ? `<p class="text-sm text-gray-500">${item.duration}</p>` : ''}
+                        <div class="flex justify-between items-start">
+                            <div>
+                                ${item.degree ? `<p class="font-medium">${item.degree}${item.field ? ` in ${item.field}` : ''}</p>` : ''}
+                            </div>
+                            ${item.date ? `<p class="text-sm text-gray-500">${item.date}</p>` : ''}
+                        </div>
+                        ${item.institution ? `
+                            <p class="text-gray-600">
+                                ${item.institution}
+                                ${item.location ? ` - ${item.location}` : ''}
+                            </p>
+                        ` : ''}
+                        ${item.description ? `<p class="mt-1 text-gray-600 text-sm italic">${item.description}</p>` : ''}
                     </div>
                 `).join('');
             }
@@ -156,30 +175,34 @@ function formatSectionContent(section, content) {
     }
 }
 // Helper function to generate targeted recommendations
-function generateRecommendations(data) {
-    const recommendations = [];
-    
-    if (!data.experience || data.experience.length === 0) {
-        recommendations.push("Add a clearly marked 'Experience' section with job titles and durations");
-    }
-    
-    if (!data.education || data.education.length === 0) {
-        recommendations.push("Include your educational background with institution names and dates");
-    }
-    
-    if (!data.skills || data.skills.length < 3) {
-        recommendations.push("List at least 5-8 relevant skills in a dedicated 'Skills' section");
-    }
-    
-    if (!data.certificates || data.certificates.length === 0) {
-        recommendations.push("Highlight any professional certifications you've earned");
-    }
-    
-    if (!data.email || !data.phone) {
-        recommendations.push("Ensure your contact information (email & phone) is clearly stated, and correctly formatted. Use a professional email address. For best practices, use a phone number with country code: +1-234-567-8901");
-    }
-    if (!data.name) {
-        recommendations.push("Name should appear at the top of your resume, specifically on the first line. Namse should be in upper case or title case, e.g. 'John Doe' or 'JOHN DOE'.");
+function generateRecommendations(data, backend_recommendations = []) {
+
+    const recommendations = backend_recommendations || [];
+
+    if (!recommendations || recommendations.length === 0) {
+        
+        if (!data.experience || data.experience.length === 0) {
+            recommendations.push("Add a clearly marked 'Experience' section with job titles and durations");
+        }
+        
+        if (!data.education || data.education.length === 0) {
+            recommendations.push("Include your educational background with institution names and dates");
+        }
+        
+        if (!data.skills || data.skills.length < 3) {
+            recommendations.push("List at least 5-8 relevant skills in a dedicated 'Skills' section");
+        }
+        
+        if (!data.certificates || data.certificates.length === 0) {
+            recommendations.push("Highlight any professional certifications you've earned");
+        }
+        
+        if (!data.email || !data.phone) {
+            recommendations.push("Ensure your contact information (email & phone) is clearly stated, and correctly formatted. Use a professional email address. For best practices, use a phone number with country code: +1-234-567-8901");
+        }
+        if (!data.name) {
+            recommendations.push("Name should appear at the top of your resume, specifically on the first line. Namse should be in upper case or title case, e.g. 'John Doe' or 'JOHN DOE'.");
+        }
     }
     
     return recommendations.map(rec => `<li>${rec}</li>`).join('');

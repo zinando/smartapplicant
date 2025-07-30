@@ -90,10 +90,10 @@ title: Dashboard
                         <p id="ats-score-description" class="mt-4 text-sm text-gray-600">Your current resume scores better than 65% of resumes we analyze.</p>
                     </div>
 
-                    <!-- Keyword Coverage -->
+                    <!-- Keyword Coverage > Renamed to Sectional Analysis -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-medium text-gray-900">Keyword Coverage</h3>
-                        <div class="mt-4 space-y-3" id="keyword-coverage">
+                        <h3 class="text-lg font-medium text-gray-900">Sectional Analysis</h3>
+                        <div class="mt-4 space-y-3" id="sectional-analysis">
                             <!-- Will be populated by JavaScript -->
                         </div>
                     </div>
@@ -292,10 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Update keyword coverage
-        const keywordCoverageContainer = document.getElementById('keyword-coverage');
+        const keywordCoverageContainer = document.getElementById('sectional-analysis');
         keywordCoverageContainer.innerHTML = '';
         
-        for (const [category, percentage] of Object.entries(analytics.keyword_coverage)) {
+        for (const [category, percentage] of Object.entries(analytics.sectional_analysis||{})) {
             const coverageElement = document.createElement('div');
             coverageElement.innerHTML = `
                 <div>
