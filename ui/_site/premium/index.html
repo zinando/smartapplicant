@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await API.request('/api/auth/premium-service/order/', 'POST', data);
 
                 if (!response.ok) {
-                    throw new Error('Failed to submit resume data');
+                    throw new Error('Failed to submit resume data: ' + response.statusText);
                 }
                 const result = await response.json();
                 if (result.status !== 1) {
