@@ -1,7 +1,7 @@
 // Paystack payment integration for resume premium and credits purchase
 
 async function handlePaymentResponse(response, type) {
-    const isSubscription = type === 'subscription';
+    const isSubscription = type != 'resume_credit';
 
     toggleButtonSpinner(
         isSubscription ? 'resume-premium-btn' : 'resume-credit-btn',
@@ -55,7 +55,7 @@ const metaData = {
 async function triggerPayment(order, type='subscription'){    
     metaData.custom_fields[0].display_name = order.name;
     metaData.custom_fields[0].mobile_number = order.phone;
-    metaData.custom_fields[0].payment_purpose = type === 'subscription' ? 'Subscription' : 'Resume Credits Purchase';
+    metaData.custom_fields[0].payment_purpose = type === 'resume_credit' ? 'Resume Credits Purchase' : 'Subscription';
     metaData.custom_fields[0].txn_ref = order.reference;
     
     // Initialize the payment
