@@ -130,6 +130,44 @@
     
     <main>
         
+
+<style>
+    /* -- Custom styles for skill tags and suggestions -- */
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        background-color: #e5e7eb;
+        border-radius: 0.375rem;
+        padding: 0.25rem 0.5rem;
+        margin: 0.25rem;
+        font-size: 0.875rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .skill-tag-remove {
+        display: inline-flex;
+        margin-left: 0.375rem;
+        cursor: pointer;
+        color: #6b7280;
+    }
+    .skill-tag-remove:hover {
+        color: #374151;
+    }
+    .suggestions-container {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .suggestion-item {
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+    .suggestion-item:hover {
+        background-color: #f3f4f6;
+    }
+    #skills {
+        min-height: 100px;
+    }
+</style>
+
+
 <div class="flex h-full">
     <!-- Sidebar -->
     <aside class="fixed inset-y-50 left-0 z-50 w-max lg:w-1/5 transform -translate-x-full 
@@ -447,9 +485,11 @@
                             <!-- Experience items will be added here -->
                             <div class="experience-item border border-gray-200 rounded-lg p-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
+                                    <div class="relative">
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Job Title</label>
                                         <input type="text" name="job-title" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="E.g: Data analyst, Volunteer, Intern, Social Worker etc">
+                                        <div id="job-title-suggestions" 
+                                            class="suggestions-container suggestions-box hidden z-10 w-full bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto"></div>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Company/Organization/Group Name</label>
@@ -470,7 +510,7 @@
                                 </div>
                                 <div class="mt-3">
                                     <label class="block text-xs font-medium text-gray-700 mb-1">Responsibilities</label>
-                                    <div class="responsibilities-container space-y-2">
+                                    <div class="responsibilities-container space-y-2 relative">
                                         <div class="flex items-center">
                                             <input type="text" name="responsibility" class="flex-1 block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: Developed and maintained web applications using React">
                                             <button type="button" onclick="removeResponsibility(this)" class="ml-2 p-1 text-gray-400 hover:text-gray-600">
@@ -479,6 +519,7 @@
                                                 </svg>
                                             </button>
                                         </div>
+                                        <div id="responsibility-suggestions" class="suggestions-container suggestions-box hidden z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto"></div>
                                     </div>
                                     <button type="button" onclick="addResponsibility(this.closest('.experience-item'))" class="mt-2 inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                         <svg class="-ml-0.5 mr-1.5 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -543,11 +584,24 @@
                     </div>
 
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Desired Job Title</h3>
+                        <div class="relative">
+                            <input id="desired-job-title" name="desired-job-title" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="e.g. Software Engineer, Data Analyst"/>
+                            <div id="desired-job-title-suggestions" class="suggestions-container suggestions-box hidden absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Skills</h3>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Add your skills (comma separated)</label>
-                            <textarea id="skills" rows="3" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: JavaScript, Python, Project Management, UI/UX Design"></textarea>
+                        <div class="relative">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Add your skills (click suggestions or type and press comma)</label>
+                            <div id="skills-input-container" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border min-h-[100px] bg-white">
+                                <div id="skill-tags" class="flex flex-wrap"></div>
+                                <input id="skill-input" type="text" class="outline-none border-none focus:ring-0 p-1 m-1" placeholder="Type a skill and press comma..." />
+                            </div>
+                            <div id="skill-suggestions" class="suggestions-container suggestions-box hidden absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto"></div>
                             <p class="mt-1 text-xs text-gray-500">We'll automatically categorize them</p>
+                            <!-- <textarea id="skills" rows="3" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="Example: JavaScript, Python, Project Management, UI/UX Design"></textarea> -->
                         </div>
                     </div>
 
@@ -644,6 +698,8 @@
 
 
 <script src="/js/draft.js"></script>
+<script src="/js/input_suggestions.js"></script>
+<script src="/js/skills_suggestions.js"></script>
 <script>
 let currentStep = 1;
 const formData = {};
@@ -672,12 +728,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     timeout: 30000
                 });
 
-                // if (result.status === 'SUCCESS') {
-                //     // Download the generated resume
                 downloadResume(file_path);
-                // } else {
-                //     throw new Error('Resume generation failed');
-                // }
+                
             } else {
                 throw new Error('Invalid response from server');
             }
@@ -722,22 +774,6 @@ document.addEventListener('DOMContentLoaded', () => {
             validateEducationStep();
         }
     });
-
-    // function validateEducationStep() {
-    //     const educationItems = document.querySelectorAll('.education-item');
-    //     let allValid = educationItems.length > 0;
-        
-    //     educationItems.forEach(item => {
-    //         const inputs = item.querySelectorAll('input[required]');
-    //         inputs.forEach(input => {
-    //             if (!input.value.trim()) {
-    //                 allValid = false;
-    //             }
-    //         });
-    //     });
-        
-    //     setButtonState('step-2-content-button', !allValid, 'bg-blue-600');
-    // }
 
     async function submitResumeData(data) {
         const response = await API.request('/api/user/resumes/generate/', 'POST', data);
@@ -857,21 +893,15 @@ function prepareFormData() {
         };
     });
 
+    // Collect desired job title
+    formData.job_title = document.getElementById('desired-job-title').value.trim();
+
     // Collect skills
-    formData.skills = document.getElementById('skills').value.split(',').map(skill => skill.trim()).filter(skill => skill);
-    // formData.template = document.querySelector('input[name="template"]:checked').value;
+    // formData.skills = document.getElementById('skills').value.split(',').map(skill => skill.trim()).filter(skill => skill);
+    formData.skills = Array.from(document.querySelectorAll('#skill-tags .skill-tag')).map(tag => tag.textContent.trim()); 
 
     // Initialize the resume preview with the collected data
     initializeTemplate();
-
-
-    // const resumePreview = new ResumePreview('preview-container');
-    // resumePreview.updateSection('personalInfo', formData.personal_info);
-    // resumePreview.updateSection('education', formData.education);
-    // resumePreview.updateSection('experiences', formData.experiences);
-    // resumePreview.updateSection('certifications', formData.certifications);
-    // resumePreview.updateSection('skills', formData.skills);
-
     return formData;
 }
 
@@ -880,6 +910,11 @@ function nextStep(step) {
     // Validate current step before proceeding
     if (step === 2 && !validateStep1()) return;
     if (step === 3 && !validateStep2()) return;
+
+    // initialize input suggestions for experience section and skills section
+    if (step === 3) {
+        initializeInputSuggestion();
+    }
     
     // Prepare form data if needed
     if (step === 4) {
@@ -961,15 +996,24 @@ function updateStepIndicator() {
 }
 
 // Dynamic form elements
-function addExperience() {
+async function addExperience() {
+    // first check if user is premium user or has resume credits
+    if (!isPremiumUser() && !hasResumeCredits()) {
+        await showPremiumRequiredModal("Go premium to enjoy adding more entries to this section; it's easy, fast and secure.");
+        return;
+    }
+
+    // Add a new experience item
     const container = document.getElementById('experience-container');
     const newItem = document.createElement('div');
     newItem.className = 'experience-item border border-gray-200 rounded-lg p-4';
     newItem.innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div class="relative">
                 <label class="block text-xs font-medium text-gray-700 mb-1">Job Title</label>
                 <input type="text" name="job-title" class="block w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border" placeholder="E.g: Data analyst, Volunteer, Intern, Social Worker etc">
+                <div id="job-title-suggestions" 
+                    class="suggestions-container suggestions-box hidden z-10 w-full bg-white border border-gray-300 rounded-md max-h-60 overflow-y-auto"></div>
             </div>
             <div>
                 <label class="block text-xs font-medium text-gray-700 mb-1">Company/Organization/Group Name</label>
@@ -999,6 +1043,7 @@ function addExperience() {
                         </svg>
                     </button>
                 </div>
+                <div id="responsibility-suggestions" class="suggestions-container suggestions-box z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto"></div>
             </div>
             <button type="button" onclick="addResponsibility(this.closest('.experience-item'))" class="mt-2 inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg class="-ml-0.5 mr-1.5 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1014,6 +1059,44 @@ function addExperience() {
         </div>
     `;
     container.appendChild(newItem);
+
+    // After adding the new experience item, set up event listeners
+    setTimeout(() => {
+        const lastExperience = document.querySelector('.experience-item:last-child');
+        const jobTitleInput = lastExperience.querySelector('input[name="job-title"]');
+        const responsibilityInputs = lastExperience.querySelectorAll('input[name="responsibility"]');
+        
+        // Add event listener for job title input
+        jobTitleInput.addEventListener('input', function() {
+        showJobTitleSuggestions(this);
+        });
+
+        jobTitleInput.addEventListener('change', async function() {
+            const inputValue = this.value.toLowerCase().trim();
+            createNewJobTitleSuggestion(inputValue);
+        });
+        setupKeyboardNavigation(document.getElementById('job-title-suggestions'), jobTitleInput);
+        
+        // Add event listeners for responsibility inputs
+        responsibilityInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                showResponsibilitySuggestions(this);
+            });
+            input.addEventListener('focus', async function() {
+                showResponsibilitySuggestions(this);
+            });
+            setupKeyboardNavigation(document.getElementById('responsibility-suggestions'), input);
+        });
+        
+        // Hide suggestions when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.suggestions-container') && 
+                !e.target.matches('input[name="job-title"], input[name="responsibility"]')) 
+                {
+                    document.querySelectorAll('.suggestions-container').forEach(s => s.classList.add('hidden'));
+                }
+        });
+    }, 0);
 }
 
 function removeExperience(item) {
@@ -1032,14 +1115,36 @@ function addResponsibility(experienceItem) {
             </svg>
         </button>
     `;
+    // Add suggestion div item
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.id = 'responsibility-suggestions';
+    suggestionDiv.className = 'suggestions-container suggestions-box hidden z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto';
+
+    // Add event listener for the new responsibility input: showResponsibilitySuggestions(this);
+    const input = newItem.querySelector('input');
+    input.addEventListener('input', function() {
+        showResponsibilitySuggestions(this);
+    });
+    input.addEventListener('focus', function() {
+      showResponsibilitySuggestions(this);
+    });
+
+    // newItem.appendChild(suggestionDiv);
     container.appendChild(newItem);
+    container.appendChild(suggestionDiv);
+    setupKeyboardNavigation(suggestionDiv, input);
 }
 
 function removeResponsibility(button) {
     button.closest('div').remove();
 }
 
-function addEducation() {
+async function addEducation() {
+    // first check if user is premium user or has resume credits
+    if (!isPremiumUser() && !hasResumeCredits()) {
+        await showPremiumRequiredModal("Go premium to enjoy adding more entries to this section; it's easy, fast and secure.");
+        return;
+    }
     const container = document.getElementById('education-container');
     const newItem = document.createElement('div');
     newItem.className = 'education-item border border-gray-200 rounded-lg p-4';
@@ -1080,7 +1185,14 @@ function removeEducation(item) {
     validateEducationStep();
 }
 
-function addCertification() {
+async function addCertification() {
+    // first check if user is premium user or has resume credits
+    if (!isPremiumUser() && !hasResumeCredits()) {
+        await showPremiumRequiredModal("Go premium to enjoy adding more entries to this section; it's easy, fast and secure.");
+        return;
+    }
+
+    // Add a new certification item
     const container = document.getElementById('certification-container');
     const newItem = document.createElement('div');
     newItem.className = 'certification-item border border-gray-200 rounded-lg p-4';
@@ -1142,7 +1254,7 @@ function removeCertification(item) {
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
                         </a>
                         <!-- Instagram -->
-                        <a href="https://www.instagram.com/smartapplicant.ai" class="text-gray-400 hover:text-white" target="_blank">
+                        <a href="https://www.instagram.com/smart.applicant" class="text-gray-400 hover:text-white" target="_blank">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
                             </svg>
