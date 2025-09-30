@@ -92,7 +92,7 @@ function getPartialFormData() {
     const certifications = [];
     document.querySelectorAll('.certification-item').forEach(item => {
         const entry = {};
-        ['name', 'cert-org', 'cert-date', 'cert-expiry'].forEach(field => {
+        ['cert-name', 'cert-org', 'cert-date', 'cert-expiry'].forEach(field => {
             const value = item.querySelector(`[name="${field}"]`)?.value.trim();
             if (value) entry[field] = value;
         });
@@ -415,7 +415,6 @@ async function getDraft() {
 
 // Load draft into form
 function loadDraft(draft=null) {
-//   const draft = getDraft();
   if (!draft) return;
   
   // Partial form population (only filled fields)

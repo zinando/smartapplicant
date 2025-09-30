@@ -369,11 +369,23 @@ function setupKeyboardNavigation(suggestionsContainer, inputElement) {
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (activeSuggestion) {
+        if (inputElement.id == 'skill-input'){
+          addSkill(activeSuggestion.textContent);
+          suggestionsContainer.style.display = 'none';
+          inputElement.blur();
+        } else {
         inputElement.value = activeSuggestion.textContent;
         suggestionsContainer.classList.add('hidden');
+        }
+        
       }
     } else if (e.key === 'Escape') {
+      if (inputElement.id == 'skill-input'){
+        suggestionsContainer.style.display = 'none';
+        inputElement.blur();
+      } else {
       suggestionsContainer.classList.add('hidden');
+      }
     }
   });
 }

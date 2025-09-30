@@ -139,17 +139,21 @@
                         
                         const skillText = document.createElement('span');
                         skillText.textContent = skill;
-                        
-                        const addButton = document.createElement('button');
-                        addButton.className = 'text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded';
-                        addButton.textContent = 'Add';
-                        addButton.addEventListener('click', (e) => {
+                        skillText.addEventListener('click', (e) => {
                             e.stopPropagation();
                             addSkill(skill);
                         });
                         
+                        // const addButton = document.createElement('button');
+                        // addButton.className = 'text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded';
+                        // addButton.textContent = 'Add';
+                        // addButton.addEventListener('click', (e) => {
+                        //     e.stopPropagation();
+                        //     addSkill(skill);
+                        // });
+                        
                         div.appendChild(skillText);
-                        div.appendChild(addButton);
+                        // div.appendChild(addButton);
                         
                         div.addEventListener('click', () => {
                             addSkill(skill);

@@ -716,7 +716,8 @@ document.addEventListener('DOMContentLoaded', () => {
     generateBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         toggleGenerateButton(true);
-
+        console.log(`Generating resume with data:`, formData);
+        // return
         try {
             // Submit formData to backend
             const response = await submitResumeData(formData);
@@ -724,8 +725,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.task_id) {
                 // Poll for task completion
                 const file_path = await pollTaskResult(response.task_id, {
-                    interval: 2000,
-                    timeout: 30000
+                    interval: 20000,
+                    timeout: 60000
                 });
 
                 downloadResume(file_path);
