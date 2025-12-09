@@ -808,6 +808,7 @@ function showToast(message, type = 'info') {
 </script>
 
     </main>
+    <!-- <div id="facebook-jssdk"></div> -->
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-300 py-12 px-4">
@@ -916,6 +917,8 @@ function showToast(message, type = 'info') {
 
     <!-- display mobile menu on click -->
     <script>
+        let fbSDKPromise = null;   // Cache the initialization promise
+        let fbInstance = null;     // Cache the FB object
         document.addEventListener('DOMContentLoaded', () => {
             // Listen for storage changes from other tabs
             window.addEventListener('storage', (event) => {
@@ -939,7 +942,138 @@ function showToast(message, type = 'info') {
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
+
+            // Load Facebook SDK
+            // getFacebookLoginDetails();
+
         });
+
+        // async function getFacebookLoginDetails() {
+        //     try {
+        //         // 1. Load SDK script dynamically and wait for it
+        //         await new Promise((resolve, reject) => {
+        //             const id = 'facebook-jssdk';
+        //             const existing = document.getElementById(id);
+
+        //             if (existing) {
+        //                 // SDK already added — resolve immediately
+        //                 return resolve();
+        //             }
+
+        //             const js = document.createElement('script');
+        //             js.id = id;
+        //             js.src = "https://connect.facebook.net/en_US/sdk.js";
+        //             js.onload = resolve;
+        //             js.onerror = () => reject(new Error("Failed to load Facebook SDK"));
+        //             document.body.appendChild(js);
+        //         });
+
+        //         // 2. Fetch app credentials from backend
+        //         const response = await API.request('/facebook/login/');
+        //         const data = await response.json();
+
+        //         if (!data.app_id) {
+        //             throw new Error("Invalid response: missing app_id");
+        //         }
+
+        //         // 3. Ensure FB object exists
+        //         if (typeof FB === "undefined") {
+        //             throw new Error("Facebook SDK loaded, but FB object is not available");
+        //         }
+
+        //         // 4. Initialize the SDK
+        //         return await new Promise((resolve) => {
+        //             window.fbAsyncInit = function () {
+        //                 FB.init({
+        //                     appId: data.app_id,
+        //                     cookie: true,
+        //                     xfbml: true,
+        //                     version: data.app_version,
+        //                 });
+
+        //                 console.log("Facebook SDK initialized");
+        //                 resolve(FB);
+        //             };
+        //         });
+
+        //     } catch (error) {
+        //         console.error("Facebook Login Initialization Failed:", error.message);
+        //         throw error;
+        //     }
+        // }
+        async function getFacebookLoginDetails() {
+            // If FB already initialized, return it immediately
+            if (fbInstance) {
+                return fbInstance;
+            }
+
+            // If initialization already started, return the same promise
+            if (fbSDKPromise) {
+                return fbSDKPromise;
+            }
+
+            fbSDKPromise = new Promise(async (resolve, reject) => {
+                try {
+                    // 1. Load the SDK script
+                    const loadSdk = () => new Promise((res, rej) => {
+                        const id = 'facebook-jssdk';
+
+                        // If script already exists, resolve immediately
+                        if (document.getElementById(id)) return res();
+
+                        const js = document.createElement('script');
+                        js.id = id;
+                        js.src = "https://connect.facebook.net/en_US/sdk.js";
+                        js.onload = res;
+                        js.onerror = () => rej(new Error("Failed to load Facebook SDK"));
+
+                        document.body.appendChild(js);
+                    });
+
+                    await loadSdk();
+
+                    // 2. Fetch app credentials
+                    const response = await API.request('/facebook/login/');
+                    const data = await response.json();
+
+                    if (!data.app_id || !data.app_version) {
+                        return reject(new Error("Invalid backend response for FB login setup"));
+                    }
+
+                    // 3. Validate FB object exists
+                    if (typeof FB === "undefined") {
+                        return reject(new Error("Facebook SDK loaded but FB object missing"));
+                    }
+
+                    // 4. Initialize Facebook SDK
+                    window.fbAsyncInit = function () {
+                        try {
+                            FB.init({
+                                appId: data.app_id,
+                                cookie: true,
+                                xfbml: true,
+                                version: data.app_version
+                            });
+                            FB.AppEvents.logPageView();  
+
+                            fbInstance = FB;  // Cache FB instance
+                            console.log("Facebook SDK initialized");
+
+                            resolve(FB);
+                        } catch (err) {
+                            reject(new Error("FB.init() failed: " + err.message));
+                        }
+                    };
+
+                } catch (error) {
+                    console.error("Facebook Login Initialization Failed:", error);
+                    reject(error);
+                }
+            });
+
+            return fbSDKPromise;
+        }
+
 
         function toggleSpinner() {
             const spinner = document.getElementById('spinner');

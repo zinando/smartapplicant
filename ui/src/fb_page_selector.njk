@@ -1,0 +1,107 @@
+---
+layout: base.njk
+title: Select Facebook Page
+---
+
+<!-- Page Selection Hero Section -->
+<section class="hero-gradient text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Choose a Facebook Page to Connect</h1>
+        <p class="text-xl opacity-90 max-w-3xl mx-auto">Select the page you want SmartApplicant to manage. You can change this anytime.</p>
+    </div>
+</section>
+
+<!-- Page Selection Grid -->
+<section class="py-16 px-4 bg-gray-50">
+    <div class="max-w-5xl mx-auto">
+        <h2 class="text-2xl font-semibold mb-6 text-center">Your Facebook Pages</h2>
+
+        <div id="pagesContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically populated with JavaScript -->
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingState" class="flex justify-center mt-10">
+            <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+let code = null;
+document.addEventListener('DOMContentLoaded', () => {
+    // get the 'code' parameter from URL
+    const params = new URLSearchParams(window.location.search);
+    code = params.get('code');
+    console.log("CODE:", code);
+
+    const loadingState = document.getElementById('loadingState');
+    const pagesContainer = document.getElementById('pagesContainer');
+
+    fetchPages();
+});
+
+async function fetchPages() {
+    try {
+        const response = await fetch(`/facebook/select-page/?code=${code}`); // Django API endpoint
+        const data = await response.json();
+
+        loadingState.classList.add('hidden');
+        if (data.length === 0) {
+            pagesContainer.innerHTML = '<p class="text-center text-gray-600">No Facebook pages found. Please ensure you have pages linked to your account.</p>';
+            return;
+        }
+
+        data.forEach(page => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300";
+
+            card.innerHTML = `
+                <div class="flex items-center space-x-4 mb-4">
+                    <img src="${page.picture}" class="w-14 h-14 rounded-full shadow" />
+                    <div>
+                        <h3 class="text-lg font-bold">${page.name}</h3>
+                        <p class="text-gray-500 text-sm">${page.category}</p>
+                    </div>
+                </div>
+
+                <button data-id="${page.id}" class="selectPageBtn w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-all duration-300 relative overflow-hidden">
+                    <span class="spinner hidden absolute left-4 w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span>
+                    <span class="button-text">Connect This Page</span>
+                </button>
+            `;
+
+            pagesContainer.appendChild(card);
+        });
+
+        attachButtonListeners();
+
+    } catch (error) {
+        loadingState.innerHTML = '<p class="text-red-600">Failed to load pages.</p>';
+    }
+}
+
+function attachButtonListeners() {
+    document.querySelectorAll('.selectPageBtn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const spinner = btn.querySelector('.spinner');
+            const btnText = btn.querySelector('.button-text');
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'Connecting...';
+
+            const pageId = btn.getAttribute('data-id');
+            const response = await API.request(`/facebook/select-page/`, 'POST', { page_id: pageId, code: code });
+            if (!response.ok) {
+                spinner.classList.add('hidden');
+                btnText.textContent = 'Connect This Page';
+                showToast(await response.text(), 'error');
+                return;
+            }
+            const data = await response.json();
+            showToast(data.message, 'success');
+            await delay(1500); // wait for 1.5 seconds 
+            window.location.href = data.redirect_url;
+        });
+    });
+}
+</script>

@@ -1,0 +1,82 @@
+---
+layout: base.njk
+title: Facebook Login
+---
+
+<!-- Facebook Login Hero Section -->
+<section class="hero-gradient text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Connect Your Facebook Account</h1>
+        <p class="text-xl opacity-90 max-w-2xl mx-auto">Log in securely with Facebook to allow SmartApplicant to access your selected pages for automation.</p>
+    </div>
+</section>
+
+<!-- Login Button Section -->
+<section class="py-16 px-4 bg-white">
+    <div class="max-w-xl mx-auto text-center">
+        <h2 class="text-2xl font-semibold mb-4">Proceed with Facebook Authentication</h2>
+        <p class="text-gray-600 mb-8">This step is required to enable automated posting, comment replies, and engagement management.</p>
+
+        <button id="fbLoginBtn" class="relative inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-10 rounded-full shadow-lg transition-all duration-300 overflow-hidden">
+            <span class="spinner hidden absolute left-4 w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span class="button-text">Login with Facebook</span>
+        </button>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    // const FB = await getFacebookLoginDetails();
+    // console.log(`Facebook SDK initialized. ${FB}`);
+    const fbLoginBtn = document.getElementById('fbLoginBtn');
+    fbLoginBtn.addEventListener('click', async () => {
+        const spinner = fbLoginBtn.querySelector('.spinner');
+        const btnText = fbLoginBtn.querySelector('.button-text');
+        spinner.classList.remove('hidden');
+        btnText.textContent = 'Connecting...';
+
+        try{
+
+            const response = await API.request('/facebook/login/');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(`Facebook login URL fetched. ${data.auth_url}`);
+            window.location.href = data.auth_url;
+        } catch (error) {
+            spinner.classList.add('hidden');
+            btnText.textContent = 'Login with Facebook';
+            // alert(`An error occurred while trying to connect to Facebook. ${error.message}. Please try again.`);
+        }
+    });
+});
+
+function statusChangeCallback(response) {
+    const fbLoginBtn = document.getElementById('fbLoginBtn');
+    const spinner = fbLoginBtn.querySelector('.spinner');
+    const btnText = fbLoginBtn.querySelector('.button-text');
+
+    if (response.status === 'connected') {
+        // User is logged in and authenticated
+        window.location.href = '/facebook_pages_selection';
+    } else {
+        // User is not logged in or not authenticated
+        FB.login(function(response) {
+            if (response.authResponse) {
+                // localStorage.setItem("fbAuthResponse", JSON.stringify(response.authResponse));
+                // window.location.href = '/fb_page_selector';
+            } else {
+                spinner.classList.add('hidden');
+                btnText.textContent = 'Login with Facebook';
+                console.error('Facebook login was cancelled or not fully authorized. Please try again.');
+            }
+        }, {
+            scope: 'pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_engagement,pages_manage_metadata,pages_read_user_content',
+            return_scopes: true,
+            response_type: 'code'
+
+        });
+    }
+}
+</script>
