@@ -160,17 +160,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // get the 'code' parameter from URL
     const params = new URLSearchParams(window.location.search);
     code = params.get('code');
+    const error = params.get('error');
     console.log("CODE:", code);
-
+    
     const loadingState = document.getElementById('loadingState');
     const pagesContainer = document.getElementById('pagesContainer');
+    if (error) {
+        loadingState.innerHTML = `<p class="text-red-600">Error during Facebook authentication: ${error}</p>`;
+        return;
+    }
 
     fetchPages();
 });
 
 async function fetchPages() {
     try {
-        const response = await fetch(`/facebook/select-page/?code=${code}`); // Django API endpoint
+        const response = await API.request(`/facebook/select-page/?code=${code}`); // Django API endpoint
         const data = await response.json();
 
         loadingState.classList.add('hidden');

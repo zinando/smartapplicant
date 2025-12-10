@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchPages() {
     try {
-        const response = await fetch(`/facebook/select-page/?code=${code}`); // Django API endpoint
+        const response = await API.request(`/facebook/select-page/?code=${code}`); // Django API endpoint
         const data = await response.json();
 
         loadingState.classList.add('hidden');

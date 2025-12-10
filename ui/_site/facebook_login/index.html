@@ -169,12 +169,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log(`Facebook login URL fetched. ${data.auth_url}`);
+            // console.log(`Facebook login URL fetched. ${data.auth_url}`);
             window.location.href = data.auth_url;
+            // window.location.href= '/fb_page_selector/?error=access_denied';
         } catch (error) {
             spinner.classList.add('hidden');
             btnText.textContent = 'Login with Facebook';
-            // alert(`An error occurred while trying to connect to Facebook. ${error.message}. Please try again.`);
+            console.error('Error fetching Facebook login URL:', error);
         }
     });
 });
