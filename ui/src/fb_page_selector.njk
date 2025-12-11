@@ -107,7 +107,7 @@ function attachButtonListeners() {
             }
             const data = await response.json();
             showToast(data.message, 'success');
-            await delay(1500); // wait for 1.5 seconds 
+            await new Promise(resolve => setTimeout(resolve, 1500));
             window.location.href = data.redirect_url;
         });
     });
