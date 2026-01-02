@@ -176,6 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchPages() {
     try {
         const response = await API.request(`/facebook/select-page/?code=${code}`); // Django API endpoint
+        if (!response.ok) {
+            throw new Error(`HTTP error!: ${response.text()}`);
+        }
         const data = await response.json();
 
         loadingState.classList.add('hidden');
@@ -231,7 +234,7 @@ function attachButtonListeners() {
             }
             const data = await response.json();
             showToast(data.message, 'success');
-            await delay(1500); // wait for 1.5 seconds 
+            await new Promise(resolve => setTimeout(resolve, 1500));
             window.location.href = data.redirect_url;
         });
     });
