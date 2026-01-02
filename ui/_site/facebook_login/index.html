@@ -152,33 +152,47 @@
 </section>
 
 <script>
+    let facebookLoginUrl = null;
 document.addEventListener('DOMContentLoaded', async () => {
-    // const FB = await getFacebookLoginDetails();
-    // console.log(`Facebook SDK initialized. ${FB}`);
-    const fbLoginBtn = document.getElementById('fbLoginBtn');
-    fbLoginBtn.addEventListener('click', async () => {
-        const spinner = fbLoginBtn.querySelector('.spinner');
-        const btnText = fbLoginBtn.querySelector('.button-text');
-        spinner.classList.remove('hidden');
-        btnText.textContent = 'Connecting...';
-
-        try{
-
-            const response = await API.request('/facebook/login/');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            // console.log(`Facebook login URL fetched. ${data.auth_url}`);
-            window.location.href = data.auth_url;
-            // window.location.href= '/fb_page_selector/?error=access_denied';
-        } catch (error) {
-            spinner.classList.add('hidden');
-            btnText.textContent = 'Login with Facebook';
-            console.error('Error fetching Facebook login URL:', error);
-        }
-    });
+    const res = await API.request('/facebook/login/');
+    const data = await res.json();
+    facebookLoginUrl = data.auth_url;
 });
+document.getElementById('fbLoginBtn').onclick = function () {
+    if (!facebookLoginUrl) {
+        showToast("Facebook login not ready yet.", "error");
+        return;
+    }
+
+    window.location.href = facebookLoginUrl;
+};
+// document.addEventListener('DOMContentLoaded', async () => {
+//     // const FB = await getFacebookLoginDetails();
+//     // console.log(`Facebook SDK initialized. ${FB}`);
+//     const fbLoginBtn = document.getElementById('fbLoginBtn');
+//     fbLoginBtn.addEventListener('click', async () => {
+//         const spinner = fbLoginBtn.querySelector('.spinner');
+//         const btnText = fbLoginBtn.querySelector('.button-text');
+//         spinner.classList.remove('hidden');
+//         btnText.textContent = 'Connecting...';
+
+//         try{
+
+//             const response = await API.request('/facebook/login/');
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! status: ${response.status}`);
+//             }
+//             const data = await response.json();
+//             // console.log(`Facebook login URL fetched. ${data.auth_url}`);
+//             window.location.href = data.auth_url;
+//             // window.location.href= '/fb_page_selector/?error=access_denied';
+//         } catch (error) {
+//             spinner.classList.add('hidden');
+//             btnText.textContent = 'Login with Facebook';
+//             console.error('Error fetching Facebook login URL:', error);
+//         }
+//     });
+// });
 
 function statusChangeCallback(response) {
     const fbLoginBtn = document.getElementById('fbLoginBtn');
